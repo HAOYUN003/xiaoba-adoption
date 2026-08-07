@@ -198,7 +198,8 @@ html,body{height:100%;overflow:hidden;background:#03040a;color:#eaf2ff;
       <div class="group"><h4>🥗 安全辅食</h4>
         <div class="food" data-key="chicken"><span class="n">水煮鸡胸肉</span><span class="t">去骨去盐 · 优质加分</span></div>
         <div class="food" data-key="milk"><span class="n">无乳糖羊奶粉</span><span class="t">适合幼猫 · 优质加分</span></div></div>
-      <div class="group red"><h4>🚫 禁食黑名单</h4>
+      <div class="group red"><h4>🚫 暂不可投喂</h4>
+        <div class="food" data-key="catnip"><span class="n">猫条 / 零食</span><span class="t">小八还小，长大些才能吃</span></div>
         <div class="food"><span class="n">葱蒜/葡萄/巧克力</span><span class="t">有毒，严禁投喂</span></div>
         <div class="food"><span class="n">重油重盐人类饭菜</span><span class="t">高油高盐，危险</span></div></div>
     </div>
@@ -643,32 +644,33 @@ function drawFloor(){
   const gloss=CTX.createLinearGradient(0,FLOOR_TOP+30,0,H);
   gloss.addColorStop(0,"rgba(255,240,200,.20)");gloss.addColorStop(.4,"rgba(255,240,200,.06)");gloss.addColorStop(1,"rgba(90,60,30,.22)");
   CTX.fillStyle=gloss;CTX.fillRect(0,FLOOR_TOP,W,H-FLOOR_TOP);
-  // ===== 泳池（左下角，浅蓝色不规则池）=====
-  const pxl=0.10,pxr=0.30,pyt=0.22,pyb=0.52;
-  const pa=project(pxl,pyt),pb=project(pxr,pyt),pc=project(pxr,pyb),pd=project(pxl,pyb);
-  const pg2=CTX.createLinearGradient(0,pa.y,0,pc.y);
-  pg2.addColorStop(0,"#a8e6f8");pg2.addColorStop(.6,"#5cc0ec");pg2.addColorStop(1,"#3d9fd4");
-  CTX.fillStyle=pg2;
-  CTX.beginPath();CTX.moveTo(pa.x,pa.y);CTX.lineTo(pb.x,pb.y);CTX.lineTo(pc.x,pc.y);CTX.lineTo(pd.x,pd.y);CTX.closePath();CTX.fill();
-  // 泳池边框（白/浅色，带厚度）
-  CTX.strokeStyle="rgba(245,250,255,.95)";CTX.lineWidth=4;
-  CTX.strokeRect(pa.x,pa.y,pb.x-pa.x,pc.y-pa.y);
-  CTX.fillStyle="rgba(245,250,255,.5)";CTX.fillRect(pa.x,pa.y,pb.x-pa.x,3);CTX.fillRect(pa.x,pc.y-2,pb.x-pa.x,3);
-  // 池内底部格纹（马赛克）
-  CTX.strokeStyle="rgba(255,255,255,.12)";CTX.lineWidth=1;
-  for(let i=1;i<8;i++){const xx=pa.x+(pb.x-pa.x)*i/8;CTX.beginPath();CTX.moveTo(xx,pa.y);CTX.lineTo(xx,pc.y);CTX.stroke();}
-  for(let i=1;i<5;i++){const yy=pa.y+(pc.y-pa.y)*i/5;CTX.beginPath();CTX.moveTo(pa.x,yy);CTX.lineTo(pb.x,yy);CTX.stroke();}
-  // 水面波纹（更丰富）
-  CTX.strokeStyle="rgba(255,255,255,.5)";CTX.lineWidth=1.5;
-  for(let i=0;i<8;i++){const yy=pa.y+((pc.y-pa.y)*(i+0.5)/8),xx0=pa.x+8+((pb.x-pa.x)*0.08);
-    CTX.beginPath();CTX.moveTo(xx0,yy);
-    CTX.quadraticCurveTo(xx0+(pb.x-pa.x)*0.25,yy-4,xx0+(pb.x-pa.x)*0.5,yy);
-    CTX.quadraticCurveTo(xx0+(pb.x-pa.x)*0.75,yy+4,xx0+(pb.x-pa.x)*0.92,yy);CTX.stroke();}
-  // 池水高光 + 倒影光斑
-  CTX.fillStyle="rgba(255,255,255,.3)";
-  CTX.beginPath();CTX.ellipse((pa.x+pb.x)/2,pa.y+6,(pb.x-pa.x)*0.35,5,0,0,Math.PI*2);CTX.fill();
-  CTX.fillStyle="rgba(255,255,255,.15)";
-  CTX.beginPath();CTX.ellipse((pa.x+pb.x)/2,pc.y-6,(pb.x-pa.x)*0.2,3,0,0,Math.PI*2);CTX.fill();
+  // ===== 室内大浴缸（左下角，替代泳池）=====
+  obj(0.20,0.34,()=>{
+    // 浴缸底座
+    CTX.fillStyle="#f2f2ee";CTX.beginPath();
+    CTX.moveTo(-30,-6);CTX.lineTo(-22,-20);CTX.lineTo(22,-20);CTX.lineTo(30,-6);
+    CTX.lineTo(30,14);CTX.lineTo(22,22);CTX.lineTo(-22,22);CTX.lineTo(-30,14);CTX.closePath();CTX.fill();
+    CTX.strokeStyle="#cfcfc9";CTX.lineWidth=2;CTX.stroke();
+    // 浴缸内壁阴影
+    CTX.fillStyle="#d8d8d2";
+    CTX.beginPath();CTX.moveTo(-26,-6);CTX.lineTo(-20,-16);CTX.lineTo(20,-16);CTX.lineTo(26,-6);
+    CTX.lineTo(26,6);CTX.lineTo(20,12);CTX.lineTo(-20,12);CTX.lineTo(-26,6);CTX.closePath();CTX.fill();
+    // 水面
+    CTX.fillStyle="#bcdce8";
+    CTX.beginPath();CTX.moveTo(-22,-4);CTX.lineTo(-16,-12);CTX.lineTo(16,-12);CTX.lineTo(22,-4);
+    CTX.lineTo(22,4);CTX.lineTo(16,8);CTX.lineTo(-16,8);CTX.lineTo(-22,4);CTX.closePath();CTX.fill();
+    // 水面波纹
+    CTX.strokeStyle="rgba(255,255,255,.5)";CTX.lineWidth=1;
+    CTX.beginPath();CTX.moveTo(-14,-6);CTX.quadraticCurveTo(-7,-9,0,-6);CTX.quadraticCurveTo(7,-9,14,-6);CTX.stroke();
+    // 水龙头（鹅颈）
+    CTX.strokeStyle="#9aa0a8";CTX.lineWidth=4;CTX.lineCap="round";
+    CTX.beginPath();CTX.moveTo(-24,-14);CTX.lineTo(-24,-30);CTX.quadraticCurveTo(-24,-34,-20,-34);CTX.lineTo(0,-34);CTX.stroke();
+    CTX.fillStyle="#9aa0a8";CTX.beginPath();CTX.arc(0,-34,3,0,Math.PI*2);CTX.fill();
+    // 浴缸腿
+    CTX.fillStyle="#cfcfc9";CTX.fillRect(-26,20,5,6);CTX.fillRect(21,20,5,6);
+    // 高光
+    CTX.fillStyle="rgba(255,255,255,.45)";CTX.fillRect(-24,-18,5,2);
+  });
   // ===== 大花盆（玻璃门外，左下）——更多叶片层次 =====
   obj(0.36,0.24,()=>{
     CTX.fillStyle="#4a3b2a";rr(CTX,-16,0,32,24,5);CTX.fill();
@@ -1234,6 +1236,11 @@ function walkTo(x,y){
   st.walking=true;st.cat.state="walk";
 }
 function orderFood(key){
+  if(key==="catnip"){
+    notif("🚫 猫条不能喂","#ff9f8a","小八还小，肠胃没发育好，猫条/零食要长大些才能吃；现在吃幼猫粮就好");
+    sfx.click();
+    return;
+  }
   const f=FOODS[key];if(!f)return;
   ui("feedbox").classList.remove("show");
   st.pendingFood=f;
@@ -1271,6 +1278,12 @@ function onTap(sx,sy){
   }
   const w=unproject(sx,sy);
   if(st.poop&&Math.hypot(w.x-st.poop.x,w.y-st.poop.y)<0.07){cleanPoop();return;}
+  // 点击浴缸：提示幼猫洗澡注意事项
+  if(w.x>0.10&&w.x<0.30&&w.y>0.24&&w.y<0.48){
+    notif("🛁 浴缸：幼猫不能频繁洗澡","#9bd6ff","小八还小，洗澡太勤会伤皮肤；它会自己舔毛打理，脏了用湿毛巾擦擦就行");
+    sfx.click();
+    return;
+  }
   for(const k of ZKEYS){
     const z=ZONE[k];
     if(w.x>z.x&&w.x<z.x+z.w&&w.y>z.y&&w.y<z.y+z.h){
