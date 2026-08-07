@@ -174,7 +174,7 @@ html,body{height:100%;overflow:hidden;background:#03040a;color:#eaf2ff;
 #guide .g-btn button:disabled{opacity:.4;cursor:default;}
 </style>
 </head>
-<body>
+<body tabindex="0">
 <div id="wrap">
   <header id="appbar">
     <div class="brand"><span class="logo">🐾</span>
@@ -1365,17 +1365,20 @@ function toggleKeyMode(){
 (function(){
   const dp=ui("dpad");
   if(!dp)return;
+  function addKey(k){st.keys=[...new Set([...st.keys,k])];st.keyMode=true;if(st.mode)stopAction();}
+  function delKey(k){st.keys=st.keys.filter(x=>x!==k);}
   dp.querySelectorAll("button").forEach(btn=>{
     const k=btn.getAttribute("data-k");
-    let relT=null;
-    function press(e){e.preventDefault();e.stopPropagation();if(relT){clearTimeout(relT);relT=null;}st.keys=[...new Set([...st.keys,k])];st.keyMode=true;if(st.mode)stopAction();}
-    function release(e){e.preventDefault();e.stopPropagation();if(relT)clearTimeout(relT);relT=setTimeout(()=>{st.keys=st.keys.filter(x=>x!==k);},120);}
-    btn.addEventListener("pointerdown",press);
-    btn.addEventListener("pointerup",release);
-    btn.addEventListener("pointerleave",release);
-    btn.addEventListener("pointercancel",release);
-    btn.addEventListener("touchstart",press,{passive:false});
-    btn.addEventListener("touchend",release,{passive:false});
+    btn.addEventListener("pointerdown",e=>{e.preventDefault();e.stopPropagation();try{btn.setPointerCapture(e.pointerId);}catch(_){}addKey(k);});
+    btn.addEventListener("pointerup",e=>{e.preventDefault();e.stopPropagation();delKey(k);});
+    btn.addEventListener("pointercancel",e=>{e.preventDefault();delKey(k);});
+    // 鼠标/触屏兜底（兼容不支持 pointer 事件的浏览器）
+    btn.addEventListener("mousedown",e=>{e.preventDefault();e.stopPropagation();addKey(k);});
+    btn.addEventListener("mouseup",e=>{e.preventDefault();e.stopPropagation();delKey(k);});
+    btn.addEventListener("mouseleave",()=>delKey(k));
+    btn.addEventListener("touchstart",e=>{e.preventDefault();e.stopPropagation();addKey(k);},{passive:false});
+    btn.addEventListener("touchend",e=>{e.preventDefault();e.stopPropagation();delKey(k);},{passive:false});
+    btn.addEventListener("touchcancel",()=>delKey(k));
   });
 })();
 /* ===================== 更新 ===================== */
@@ -1924,6 +1927,9 @@ requestAnimationFrame(function loop(now){
   draw();
   requestAnimationFrame(loop);
 });
+/* 确保 body 获得焦点，键盘事件始终生效 */
+document.body.focus();
+document.addEventListener("pointerdown",()=>{if(document.activeElement!==document.body)document.body.focus();},{passive:true});
 </script>
 </body>
 </html>
