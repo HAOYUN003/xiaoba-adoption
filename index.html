@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>小八 · 领养守护官（电影版）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:#03040a;color:#eaf2ff;
+  font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;user-select:none;}
+#wrap{height:100%;display:flex;flex-direction:column;}
+#appbar{position:relative;flex:none;height:58px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;background:linear-gradient(180deg,rgba(8,10,24,.94),rgba(8,10,24,.62));
+  border-bottom:1px solid rgba(120,190,255,.22);backdrop-filter:blur(8px);z-index:30;}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;}
+.brand .logo{width:34px;height:34px;border-radius:10px;flex:none;
+  background:radial-gradient(circle at 30% 25%,#7fe0ff,#2f6fe0 60%,#1a2f78);
+  display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;
+  box-shadow:0 0 16px rgba(80,160,255,.7),inset 0 0 8px rgba(255,255,255,.25);}
+.brand .t{font-weight:700;letter-spacing:2px;font-size:16px;text-shadow:0 0 12px rgba(120,200,255,.6);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brand .t small{display:block;font-size:9px;letter-spacing:3px;color:#6f86c8;font-weight:500;}
+#hud{display:flex;align-items:center;gap:10px;flex:none;}
+#affinity{min-width:196px;background:rgba(10,14,30,.72);border:1px solid rgba(120,190,255,.28);
+  border-radius:14px;padding:7px 12px;box-shadow:0 4px 18px rgba(0,0,0,.5);}
+#affinity .row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+#affinity .lbl{font-size:11px;color:#9fb4ff;letter-spacing:2px;}
+#affinity .val{font-weight:800;color:#7bffc0;font-size:15px;text-shadow:0 0 10px rgba(80,255,180,.5);}
+#affinity .lv{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;
+  background:linear-gradient(135deg,#2f9bff,#7b5cff);color:#fff;box-shadow:0 0 10px rgba(90,140,255,.6);}
+#affinity .bar{height:4px;margin-top:6px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden;}
+#affinity .bar i{display:block;height:100%;width:0%;border-radius:3px;background:linear-gradient(90deg,#31e0a0,#7bffc0);
+  box-shadow:0 0 8px rgba(80,255,180,.8);}
+#aud{width:40px;height:40px;border-radius:12px;border:1px solid rgba(120,190,255,.3);
+  background:rgba(10,14,30,.72);color:#cfdaff;font-size:17px;cursor:pointer;flex:none;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.5);}
+#aud.off{opacity:.5;}
+#keyBtn{width:auto;padding:0 12px;height:40px;border-radius:12px;border:1px solid rgba(120,190,255,.3);
+  background:rgba(10,14,30,.72);color:#cfdaff;font-size:13px;font-weight:700;cursor:pointer;flex:none;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.5);gap:4px;}
+#keyBtn.on{border-color:rgba(123,255,192,.7);color:#7bffc0;background:rgba(10,30,20,.72);}
+#keyBtn:active{transform:scale(.96);}
+#wasdHint{position:fixed;left:16px;bottom:180px;z-index:60;color:#cfe3c0;font-size:11px;letter-spacing:1px;
+  background:rgba(10,20,16,.55);padding:6px 12px;border-radius:8px;opacity:.85;pointer-events:none;transition:opacity .4s;}
+#wasdHint.hide{opacity:0;}
+#dpad{position:fixed;left:16px;bottom:16px;z-index:60;width:150px;height:150px;
+  grid-template-columns:50px 50px 50px;grid-template-rows:50px 50px 50px;gap:0;display:none;}
+#dpad.show{display:grid;}
+#dpad button{width:50px;height:50px;background:rgba(10,20,16,.55);border:1px solid rgba(120,190,255,.25);
+  color:#cfe3c0;font-size:18px;font-weight:800;cursor:pointer;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;}
+#dpad button:active{background:rgba(123,255,192,.35);color:#7bffc0;}
+#dpad .pU{grid-column:2;grid-row:1;}#dpad .pL{grid-column:1;grid-row:2;}#dpad .pD{grid-column:2;grid-row:3;}#dpad .pR{grid-column:3;grid-row:2;}
+#stage{position:relative;flex:1;min-height:0;overflow:hidden;background:#000;}
+#view{position:absolute;left:0;top:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair;}
+#objective{position:absolute;left:0;right:0;bottom:12px;text-align:center;pointer-events:none;z-index:20;}
+#objective span{display:inline-block;padding:8px 20px;border-radius:12px;font-size:13px;letter-spacing:1px;
+  color:#dcebff;background:rgba(8,10,24,.72);border:1px solid rgba(120,190,255,.22);
+  box-shadow:0 4px 20px rgba(0,0,0,.5);backdrop-filter:blur(6px);max-width:94%;}
+#dock{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px;z-index:40;}
+#dock button{width:46px;height:50px;border-radius:14px;border:1px solid rgba(120,190,255,.3);
+  background:rgba(10,14,30,.78);color:#cfdaff;font-size:9.5px;letter-spacing:1px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  box-shadow:0 6px 18px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.05);backdrop-filter:blur(6px);
+  transition:transform .12s,background .12s;}
+#dock button:hover{transform:translateX(-3px);background:rgba(40,80,160,.55);}
+#dock button .ic{font-size:17px;line-height:1;}
+#feedbox{position:absolute;right:64px;top:12px;width:252px;z-index:45;display:none;
+  background:rgba(10,14,30,.93);border:1px solid rgba(120,190,255,.3);border-radius:16px;padding:14px 15px;
+  max-height:82%;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.7);backdrop-filter:blur(10px);}
+#feedbox.show{display:block;}
+#feedbox h3{margin-bottom:9px;font-size:15px;color:#7bffc0;letter-spacing:1px;}
+.group{margin-bottom:10px;}
+.group h4{font-size:12px;color:#9fb4ff;margin-bottom:6px;letter-spacing:1px;}
+.food{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:6px;border-radius:11px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(120,190,255,.2);font-size:13px;cursor:pointer;
+  transition:background .15s,transform .1s;}
+.food:hover{background:rgba(70,130,230,.25);transform:translateX(2px);}
+.food .n{flex:1;}
+.food .t{color:#9aa6cc;font-size:11px;}
+.red h4{color:#ff9f8a;}
+.red .food{border-color:rgba(255,120,100,.4);cursor:not-allowed;opacity:.8;}
+.red .food .t{color:#ffb9a8;}
+#notifs{position:absolute;right:12px;top:12px;z-index:60;pointer-events:none;display:flex;flex-direction:column;gap:8px;}
+.notif{background:rgba(10,14,30,.88);border-left:3px solid var(--nc,#7bffc0);border-radius:10px;
+  padding:9px 14px;font-size:13px;color:#e6efff;box-shadow:0 8px 26px rgba(0,0,0,.6);
+  backdrop-filter:blur(8px);transform:translateX(120%);transition:transform .3s cubic-bezier(.2,.9,.3,1.2);
+  max-width:300px;}
+.notif.in{transform:none;}
+.notif b{display:block;font-size:14px;}
+.notif small{color:#9fb4ff;font-size:11px;}
+.ovl{position:fixed;inset:0;background:rgba(4,6,16,.88);backdrop-filter:blur(6px);display:none;flex-direction:column;z-index:80;}
+.ovl.show{display:flex;}
+.ovl-head{flex:none;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;
+  border-bottom:1px solid rgba(120,190,255,.22);background:rgba(8,10,24,.75);}
+.ovl-head h2{font-size:16px;letter-spacing:1px;text-shadow:0 0 12px rgba(120,200,255,.5);}
+.ovl-close{width:38px;height:38px;border-radius:11px;border:1px solid rgba(120,190,255,.3);
+  background:rgba(255,255,255,.06);color:#dfe8ff;font-size:18px;cursor:pointer;}
+.ovl-close:hover{background:rgba(255,120,120,.25);}
+.ovl-body{flex:1;overflow-y:auto;padding:16px 12px 44px;user-select:text;}
+.content{max-width:880px;margin:0 auto;}
+.content h1{font-size:21px;margin-bottom:4px;letter-spacing:1px;text-shadow:0 0 14px rgba(120,200,255,.45);}
+.content .sub{color:#8fa0cc;font-size:13px;margin-bottom:16px;}
+.card{background:rgba(12,16,34,.6);border:1px solid rgba(120,190,255,.2);border-radius:16px;padding:16px 16px 13px;margin-bottom:14px;}
+.card h2{font-size:16px;margin-bottom:11px;padding-bottom:7px;border-bottom:1px solid rgba(120,190,255,.2);color:#cfe0ff;}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:4px;}
+.tbl th,.tbl td{border:1px solid rgba(120,190,255,.18);padding:8px 10px;text-align:left;vertical-align:top;}
+.tbl th{background:rgba(120,190,255,.08);font-weight:600;white-space:nowrap;width:120px;color:#aebdff;}
+.tag{display:inline-block;background:rgba(80,160,255,.14);color:#9bd6ff;border-radius:20px;padding:3px 12px;font-size:12px;margin:3px 3px 0 0;}
+.good{background:rgba(80,255,180,.08);border:1px solid rgba(80,255,180,.35);color:#8ff2c0;border-radius:10px;padding:9px 13px;font-size:13px;margin:8px 0;}
+.warn{background:rgba(255,143,122,.08);border:1px solid rgba(255,143,122,.35);color:#ffb9a8;border-radius:10px;padding:9px 13px;font-size:13px;margin:8px 0;}
+.list li{margin:5px 0 5px 18px;font-size:13px;}
+.btn{border:1px solid rgba(120,190,255,.35);background:rgba(80,150,255,.14);color:#dcebff;padding:9px 18px;border-radius:11px;font-size:13px;cursor:pointer;transition:background .15s;}
+.btn:hover{background:rgba(80,150,255,.3);}
+.btn.primary{background:linear-gradient(135deg,#2f9bff,#7b5cff);border:none;color:#fff;font-weight:700;box-shadow:0 0 14px rgba(90,140,255,.5);}
+.btn.green{background:linear-gradient(135deg,#19c88f,#7bffc0);border:none;color:#05301f;font-weight:800;box-shadow:0 0 14px rgba(80,255,180,.5);}
+.btn.danger{border-color:rgba(255,143,122,.4);color:#ffb9a8;background:rgba(255,143,122,.08);}
+.photo{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0 4px;justify-content:center;}
+.slot{width:148px;height:166px;border:2px dashed rgba(120,190,255,.35);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#8fa0cc;font-size:12px;background:rgba(255,255,255,.03);overflow:hidden;}
+.slot img{width:100%;height:100%;object-fit:cover;}
+.videobox{width:100%;max-width:640px;margin:0 auto;text-align:center;}
+.videobox video{width:100%;border-radius:12px;background:#000;max-height:360px;}
+.vidph{width:100%;min-height:180px;border:2px dashed rgba(120,190,255,.35);border-radius:12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#8fa0cc;
+  background:rgba(255,255,255,.03);font-size:13px;}
+.qblock{margin-bottom:13px;padding:11px 13px;background:rgba(255,255,255,.03);border:1px solid rgba(120,190,255,.18);border-radius:12px;}
+.qblock .qt{font-size:13.5px;font-weight:600;margin-bottom:8px;line-height:1.5;}
+.qblock .qt .core{color:#ff9f8a;font-size:11px;font-weight:700;border:1px solid rgba(255,143,122,.5);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:2px;}
+.opt{display:flex;align-items:flex-start;gap:8px;padding:6px 8px;border-radius:8px;margin:3px 0;background:rgba(255,255,255,.04);font-size:13px;cursor:pointer;border:1px solid transparent;}
+.opt:hover{border-color:rgba(120,190,255,.3);}
+.opt input{accent-color:#3ec8f0;margin-top:2px;}
+.opt .pts{margin-left:auto;color:#8fa0cc;font-size:11px;white-space:nowrap;}
+.opt.veto .pts{color:#ff9f8a;}
+.qtext{width:100%;padding:8px 10px;border-radius:8px;border:1px solid rgba(120,190,255,.3);background:rgba(0,0,0,.3);color:#eaf2ff;font-size:13px;font-family:inherit;}
+#result{display:none;padding:13px 15px;border-radius:12px;margin-top:4px;font-size:14px;line-height:1.7;}
+#result.show{display:block;}
+#result.pass{background:rgba(80,255,180,.1);border:1px solid rgba(80,255,180,.4);color:#8ff2c0;}
+#result.fail{background:rgba(255,143,122,.1);border:1px solid rgba(255,143,122,.45);color:#ffb9a8;}
+#result.review{background:rgba(255,202,107,.08);border:1px solid rgba(255,202,107,.4);color:#ffd98a;}
+.contact{border:1px solid rgba(80,255,180,.55)!important;background:rgba(80,255,180,.06)!important;text-align:center;}
+.contact h2{color:#7bffc0!important;}
+.contact .phone{font-size:24px;font-weight:800;color:#fff;letter-spacing:3px;margin:8px 0;text-shadow:0 0 14px rgba(80,255,180,.5);}
+.copycard{margin-bottom:13px;padding:13px 15px;background:rgba(255,255,255,.03);border:1px solid rgba(120,190,255,.2);border-radius:12px;}
+.copycard .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.copycard .ch h3{font-size:14px;}
+.copycard pre{white-space:pre-wrap;font-family:inherit;font-size:12.5px;line-height:1.8;color:#cdd9ff;background:rgba(0,0,0,.25);padding:12px;border-radius:10px;max-height:360px;overflow-y:auto;}
+#ovFollow textarea{width:100%;min-height:42px;padding:7px 9px;border-radius:8px;border:1px solid rgba(120,190,255,.28);background:rgba(0,0,0,.3);color:#eaf2ff;font-size:12.5px;font-family:inherit;resize:vertical;}
+.cb{display:flex;align-items:center;gap:8px;font-size:13px;}
+.foot{color:#6f86c8;font-size:12px;text-align:center;margin-top:16px;line-height:1.8;}
+#intro{position:fixed;inset:0;z-index:120;background:#02030a;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity 1.2s ease;pointer-events:none;}
+#intro.hide{opacity:0;}
+#intro .t1{font-size:clamp(26px,6vw,46px);font-weight:800;letter-spacing:8px;
+  background:linear-gradient(120deg,#9be8ff,#7b9bff,#c09bff,#7bffc0);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 40px rgba(90,160,255,.5);animation:glow 3s infinite;}
+#intro .t2{margin-top:14px;font-size:15px;letter-spacing:5px;color:#8fa0cc;}
+#intro .t3{margin-top:26px;font-size:12px;letter-spacing:2px;color:#5a6fa0;animation:blink 1.6s infinite;}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 8px rgba(120,190,255,.4));}50%{filter:drop-shadow(0 0 20px rgba(120,190,255,.8));}}
+@keyframes blink{0%,100%{opacity:.4;}50%{opacity:1;}}
+#flash{position:fixed;inset:0;z-index:110;pointer-events:none;background:radial-gradient(circle,#9be8ff,rgba(120,160,255,0));opacity:0;transition:opacity .6s;}
+#flash.on{opacity:.55;}
+#guide{position:fixed;z-index:130;left:50%;bottom:26px;transform:translateX(-50%);width:min(680px,92vw);
+  background:rgba(30,34,48,.94);border:1px solid rgba(150,190,255,.3);border-radius:16px;padding:16px 20px;
+  box-shadow:0 12px 40px rgba(0,0,0,.5);transition:opacity .5s,transform .5s;}
+#guide.hide{opacity:0;transform:translateX(-50%) translateY(14px);pointer-events:none;}
+#guide .g-name{font-weight:800;font-size:14px;color:#9bd6ff;margin-bottom:4px;}
+#guide .g-name b{font-size:17px;}
+#guide .g-line{font-size:14px;line-height:1.75;color:#e8efff;min-height:26px;}
+#guide .g-line .cur{display:inline-block;width:8px;height:16px;background:#7bffc0;vertical-align:-2px;animation:blink .8s infinite;}
+#guide .g-btn{margin-top:10px;text-align:right;}
+#guide .g-btn button{background:#7bffc0;color:#0a1f16;border:none;border-radius:999px;padding:8px 22px;font-weight:700;font-size:14px;cursor:pointer;}
+#guide .g-btn button:hover{filter:brightness(1.08);}
+#guide .g-btn button:disabled{opacity:.4;cursor:default;}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <header id="appbar">
+    <div class="brand"><span class="logo">🐾</span>
+      <span class="t">小八 · 领养守护官<small>GTA CITY EDITION</small></span></div>
+    <div id="hud">
+      <div id="affinity">
+        <div class="row"><span class="lbl">好感</span><span class="val" id="affVal">0/100</span><span class="lv" id="affLv">Lv1 初识友好</span></div>
+        <div class="bar"><i id="affBar"></i></div>
+      </div>
+      <button id="keyBtn" onclick="toggleKeyMode()" title="键盘控制小八移动">⌨️ WASD</button>
+      <button id="aud" onclick="toggleAudio()">🔊</button>
+    </div>
+  </header>
+
+  <div id="stage">
+    <canvas id="view"></canvas>
+    <div id="feedbox">
+      <h3>🍚 猫粮喂食台</h3>
+      <div class="group"><h4>🍖 主食 · 固定喂养</h4>
+        <div class="food" data-key="dry"><span class="n">成/幼猫粮</span><span class="t">粗蛋白≥38% · 50-60g/天</span></div></div>
+      <div class="group"><h4>🥗 安全辅食</h4>
+        <div class="food" data-key="chicken"><span class="n">水煮鸡胸肉</span><span class="t">去骨去盐 · 优质加分</span></div>
+        <div class="food" data-key="milk"><span class="n">无乳糖羊奶粉</span><span class="t">适合幼猫 · 优质加分</span></div></div>
+      <div class="group red"><h4>🚫 禁食黑名单</h4>
+        <div class="food"><span class="n">葱蒜/葡萄/巧克力</span><span class="t">有毒，严禁投喂</span></div>
+        <div class="food"><span class="n">重油重盐人类饭菜</span><span class="t">高油高盐，危险</span></div></div>
+    </div>
+    <div id="dock">
+      <button data-open="Profile" title="档案"><span class="ic">📋</span>档案</button>
+      <button data-open="Show" title="展示"><span class="ic">🖼</span>展示</button>
+      <button data-open="Survey" title="问卷"><span class="ic">📝</span>问卷</button>
+      <button data-open="Copy" title="文案"><span class="ic">✍️</span>文案</button>
+      <button data-open="Follow" title="回访"><span class="ic">🔍</span>回访</button>
+    </div>
+    <div id="notifs"></div>
+    <div id="objective"><span id="objectiveTxt">🐾 小八的森林木屋 · 点击地面或物件陪它</span></div>
+  </div>
+</div>
+
+<div id="wasdHint">⌨️ 键盘：WASD / 方向键 ｜ 触屏：点下方方向键</div>
+<div id="dpad" class="show">
+  <button class="pU" data-k="w">▲</button>
+  <button class="pL" data-k="a">◀</button>
+  <button class="pD" data-k="s">▼</button>
+  <button class="pR" data-k="d">▶</button>
+</div>
+<div id="flash"></div>
+<div id="intro">
+  <div class="t1">小 八</div>
+  <div class="t2">领 养 守 护 官</div>
+  <div class="t3" id="introTip">点击屏幕任意处 让我陪你看完这份小指南</div>
+</div>
+
+<div id="guide" class="hide">
+  <div class="g-name">🐱 我是小八 · 这份小指南带你认识这个家</div>
+  <div class="g-line" id="guideLine"></div>
+  <div class="g-btn"><button id="guideBtn" onclick="guideNext()">开始 →</button></div>
+</div>
+
+<script>
+"use strict";
+/* ===================== 工具 ===================== */
+const ui=id=>document.getElementById(id);
+const clamp=(v,a,b)=>v<a?a:(v>b?b:v);
+const lerp=(a,b,t)=>a+(b-a)*t;
+const rand=(a,b)=>a+Math.random()*(b-a);
+const W=1280,H=760,FLOOR_TOP=318;
+let SCL=1;
+let DPR=window.devicePixelRatio||1;
+let ZOOM=2;  // 高清倍率：2 倍超采样，画面更锐利
+function fit(){
+  const st=ui("stage"),rw=st.clientWidth,rh=st.clientHeight;
+  SCL=Math.min(rw/W,rh/H);
+  const v=ui("view");
+  v.width=Math.max(2,Math.round(W*SCL*ZOOM));
+  v.height=Math.max(2,Math.round(H*SCL*ZOOM));
+  CTX.setTransform(SCL*ZOOM,0,0,SCL*ZOOM,0,0);
+}
+const view=ui("view"),CTX=view.getContext("2d");
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+let __tt;
+function notif(title,color,sub){
+  const box=ui("notifs");
+  const d=document.createElement("div");d.className="notif";
+  if(color)d.style.setProperty("--nc",color);
+  d.innerHTML="<b>"+title+"</b>"+(sub?"<small>"+sub+"</small>":"");
+  box.appendChild(d);
+  requestAnimationFrame(()=>d.classList.add("in"));
+  setTimeout(()=>{d.classList.remove("in");setTimeout(()=>d.remove(),320);},2800);
+}
+function setObjective(t){ui("objectiveTxt").textContent=t;}
+/* ===================== 音效 ===================== */
+let AC=null,muted=false;
+function initAudio(){if(AC)return;try{AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();}catch(e){}}
+function toggleAudio(){muted=!muted;ui("aud").classList.toggle("off",muted);ui("aud").textContent=muted?"🔇":"🔊";if(!muted)initAudio();}
+function tone(f0,f1,dur,type,vol,delay){
+  if(muted||!AC)return;
+  const t0=AC.currentTime+(delay||0);
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.type=type||"sine";o.frequency.setValueAtTime(f0,t0);
+  o.frequency.exponentialRampToValueAtTime(Math.max(30,f1),t0+dur);
+  g.gain.setValueAtTime(0.0001,t0);
+  g.gain.linearRampToValueAtTime(vol||0.12,t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  o.connect(g);g.connect(AC.destination);o.start(t0);o.stop(t0+dur+0.05);
+}
+const sfx={
+  click:()=>tone(1500,900,0.06,"square",0.05),
+  eat:()=>{tone(320,150,0.22,"sawtooth",0.07);tone(220,120,0.26,"triangle",0.06,0.1);},
+  meow:()=>{tone(620,880,0.16,"sawtooth",0.05);tone(880,520,0.24,"sawtooth",0.05,0.13);},
+  purr:()=>{tone(80,55,0.8,"sawtooth",0.09);tone(75,50,0.8,"sawtooth",0.07,0.05);},
+  clean:()=>tone(600,1400,0.18,"sine",0.07),
+  level:()=>{tone(440,440,0.12,"sine",0.1);tone(660,660,0.12,"sine",0.1,0.13);tone(880,880,0.2,"sine",0.12,0.26);},
+  sleep:()=>tone(240,180,0.9,"triangle",0.05),
+  tv:()=>tone(200,90,0.5,"sine",0.06)
+};
+/* ===================== 世界投影 ===================== */
+function perspX(y){return lerp(0.60,1.06,Math.pow(y,1.2));}
+function syOf(y){return FLOOR_TOP+(H-FLOOR_TOP)*Math.pow(y,1.5);}
+function scaleOf(y){return lerp(0.68,1.45,y);}
+function project(x,y){return {x:W/2+(x-0.5)*W*perspX(y), y:syOf(y), s:scaleOf(y)};}
+function unproject(sx,sy){
+  const y=Math.max(0.02,Math.pow((sy-FLOOR_TOP)/(H-FLOOR_TOP),1/1.5));
+  const x=(sx-W/2)/(W*perspX(y))+0.5;
+  return {x,y};
+}
+const WALKMIN=0.33,WALKMAX=0.96,WMARGIN=0.05;
+/* ===================== 状态 ===================== */
+const CAP=999;
+const LV={1:{cap:30,name:"初识友好"},2:{cap:70,name:"信任亲近"},3:{cap:130,name:"高度信赖"},4:{cap:Infinity,name:"完全亲密"}};
+const FOODS={dry:{n:"成/幼猫粮",type:"main",score:20},chicken:{n:"水煮鸡胸肉",type:"snack",score:30},milk:{n:"无乳糖羊奶粉",type:"snack",score:25}};
+const POINTS={feed:20,clean:25,play:15,hand:30,cuddle:35,sleep:8,toilet:8,pet:6,tv:10,bag:6};
+const CONTACT_PHONE="13812630719", CONTACT_SHOW=60;
+const SAVE_KEY="xb8_score_v1";
+function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({score:st.score,lv:st.lv,poop:st.poop}));}catch(e){}}
+function loadGame(){
+  try{const d=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");
+    if(d&&typeof d.score==="number"){st.score=clamp(d.score,0,CAP);st.lv=d.lv||lvOf(st.score);if(d.poop)st.poop=d.poop;}
+  }catch(e){}
+}
+const st={
+  cat:{x:0.5,y:0.72,face:1,state:"idle",anim:rand(0,9),blink:0},
+  target:null,walking:false,mode:null,pendingFood:null,
+  score:0,lv:1,poop:null,toiletTimer:0,noticeShown:false,petCd:0,autoT:rand(8,18),
+  bubble:null,bubbleT:0,bubbleColor:"#fff",floats:[],parts:[],shock:0,hintTimer:0,feedJustOpened:0,
+  keys:[],keyMode:false,keyModeToggle:true
+};
+const ZONE={
+  FEED:{x:0.58,y:0.60,w:0.14,h:0.12,label:"🍚 喂食台",act:"喂食"},
+  LITTER:{x:0.17,y:0.64,w:0.14,h:0.13,label:"🧻 定点如厕袋",act:"如厕"},
+  BED:{x:0.82,y:0.85,w:0.17,h:0.12,label:"🛏 精致大床",act:"陪睡"},
+  BALC:{x:0.70,y:0.44,w:0.16,h:0.12,label:"🌙 飘窗软座",act:"休息"},
+  TOYS:{x:0.42,y:0.82,w:0.18,h:0.12,label:"🧸 玩具区",act:"玩耍"},
+  BAG:{x:0.06,y:0.78,w:0.12,h:0.12,label:"👕 封闭猫包",act:"入包"},
+  TV:{x:0.30,y:0.36,w:0.14,h:0.13,label:"📺 电视",act:"看电视"}
+};
+const ZKEYS=["FEED","LITTER","BED","BALC","TOYS","BAG","TV"];
+const DOOR={x1:0.05*W,y1:150,x2:0.15*W,y2:FLOOR_TOP};
+function lvOf(s){for(let i=1;i<4;i++){if(s<LV[i].cap)return i;}return 4;}
+function addAff(p){st.score=clamp(st.score+p,0,CAP);st.lv=lvOf(st.score);saveGame();}
+function updateHUD(){
+  const lv=lvOf(st.score),cap=lv===4?"MAX":LV[lv].cap;
+  ui("affVal").textContent=st.score+"/"+cap;
+  ui("affLv").textContent="Lv"+lv+" "+LV[lv].name;
+  ui("affBar").style.width=(lv===4?100:st.score/LV[lv].cap*100)+"%";
+}
+/* ===================== 森林天空背景（窗外） ===================== */
+const CITY=(function(){
+  const c=document.createElement("canvas");c.width=900;c.height=360;
+  const g=c.getContext("2d");
+  // 蓝天（上部浅蓝，下部接近地平线更亮）
+  const sky=g.createLinearGradient(0,0,0,360);
+  sky.addColorStop(0,"#7ec9f5");sky.addColorStop(.55,"#a8dcf7");sky.addColorStop(.85,"#d3ecfa");sky.addColorStop(1,"#eef7fb");
+  g.fillStyle=sky;g.fillRect(0,0,900,360);
+  // 白云（更柔美多层）
+  for(let i=0;i<7;i++){const bx=rand(40,820),by=rand(15,130),bw=rand(70,150);
+    g.fillStyle="rgba(255,255,255,.9)";
+    g.beginPath();g.arc(bx,by,bw*0.22,0,Math.PI*2);
+    g.arc(bx+bw*0.28,by-6,bw*0.3,0,Math.PI*2);
+    g.arc(bx+bw*0.58,by,bw*0.2,0,Math.PI*2);
+    g.arc(bx+bw*0.4,by+4,bw*0.32,0,Math.PI*2);g.fill();
+    g.fillStyle="rgba(255,255,255,.5)";
+    g.beginPath();g.arc(bx+bw*0.5,by+6,bw*0.26,0,Math.PI*2);g.fill();}
+  // 太阳光晕
+  const sun=g.createRadialGradient(760,60,4,760,60,80);
+  sun.addColorStop(0,"rgba(255,250,220,.95)");sun.addColorStop(.3,"rgba(255,240,180,.4)");sun.addColorStop(1,"rgba(255,240,180,0)");
+  g.fillStyle=sun;g.fillRect(660,0,220,180);
+  // 飞鸟
+  g.strokeStyle="rgba(40,60,80,.6)";g.lineWidth=1.5;
+  for(let i=0;i<4;i++){const bx=rand(120,700),by=rand(40,110),sp=rand(8,14);
+    g.beginPath();g.moveTo(bx-sp,by);g.quadraticCurveTo(bx,by-4,bx+sp,by);g.stroke();}
+  // 远处淡山丘（多一层更立体）
+  g.fillStyle="#c8e2bc";g.beginPath();g.moveTo(0,360);
+  for(let x=0;x<=900;x+=60){g.quadraticCurveTo(x+30,360-rand(30,60),x+60,360);}
+  g.lineTo(900,360);g.closePath();g.fill();
+  g.fillStyle="#b7d9b0";g.beginPath();g.moveTo(0,360);
+  for(let x=0;x<=900;x+=60){g.quadraticCurveTo(x+30,360-rand(18,40),x+60,360);}
+  g.lineTo(900,360);g.closePath();g.fill();
+  // 松树剪影（针叶林）——更多层，树干+高光
+  function pine(bx,base,sc,col){const bh=rand(100,170)*sc;
+    // 树干
+    g.fillStyle="#6a4a2a";g.fillRect(bx-2*sc,base-6*sc,4*sc,8*sc);
+    // 层叠针叶
+    for(let i=0;i<5;i++){const yy=base-i*bh*0.22,hw=(i===0?16:36-i*6)*sc;
+      g.beginPath();g.moveTo(bx-hw,yy);g.lineTo(bx,yy-bh*0.32);g.lineTo(bx+hw,yy);g.closePath();g.fill();
+      // 枝干高光（左侧受光）
+      g.fillStyle="rgba(255,255,255,.10)";
+      g.beginPath();g.moveTo(bx-hw,yy);g.lineTo(bx-hw*0.6,yy-3);g.lineTo(bx-hw*0.5,yy);g.closePath();g.fill();}
+    g.fillStyle="#6a4a2a";g.fillRect(bx-3*sc,base-4*sc,6*sc,8*sc);}
+  for(let i=0;i<18;i++){pine(16+i*52,rand(315,348),rand(0.8,1.25),"#4e8f5e");}
+  for(let i=0;i<16;i++){pine(30+i*56,rand(325,354),rand(0.9,1.45),"#3d7a4f");}
+  for(let i=0;i<10;i++){pine(40+i*80,rand(340,358),rand(1.1,1.6),"#2f6f34");}
+  // 近处草地（带草叶细节）
+  const gr=g.createLinearGradient(0,330,0,360);
+  gr.addColorStop(0,"#79b06a");gr.addColorStop(1,"#5e9a52");
+  g.fillStyle=gr;g.fillRect(0,330,900,30);
+  g.fillStyle="#4a8a42";
+  for(let i=0;i<60;i++){const gx=rand(0,900),gy=rand(332,356);g.fillRect(gx,gy,1,2);}
+  return c;
+})();
+function drawCity(rect,t){
+  const off=((t*6)%180)-90;
+  CTX.save();CTX.beginPath();CTX.rect(rect.x,rect.y,rect.w,rect.h);CTX.clip();
+  CTX.globalAlpha=0.96;
+  CTX.drawImage(CITY,0,0,CITY.width,CITY.height,rect.x+off-60,rect.y-10,rect.w+120,rect.h+40);
+  CTX.globalAlpha=1;
+  const gl=CTX.createLinearGradient(0,rect.y,0,rect.y+rect.h);
+  gl.addColorStop(0,"rgba(255,240,200,.12)");gl.addColorStop(1,"rgba(255,240,200,0)");
+  CTX.fillStyle=gl;CTX.fillRect(rect.x,rect.y,rect.w,rect.h);
+  CTX.restore();
+}
+/* ===================== 墙壁（木屋室内·高清） ===================== */
+function drawWall(t){
+  // 浅色木墙（横向拼接木板）——多层渐变，更有木质感
+  const g=CTX.createLinearGradient(0,0,0,FLOOR_TOP);
+  g.addColorStop(0,"#efd3ac");g.addColorStop(.35,"#e2bd92");g.addColorStop(.7,"#d4a97d");g.addColorStop(1,"#c79a6e");
+  CTX.fillStyle=g;CTX.fillRect(0,0,W,FLOOR_TOP);
+  // 每块木板独立渐变（横条，增强立体感）
+  for(let yy=18;yy<FLOOR_TOP;yy+=26){
+    const bg=CTX.createLinearGradient(0,yy-2,0,yy+26);
+    bg.addColorStop(0,"rgba(255,240,210,.16)");bg.addColorStop(.5,"rgba(255,240,210,0)");bg.addColorStop(1,"rgba(90,55,30,.10)");
+    CTX.fillStyle=bg;CTX.fillRect(0,yy-2,W,28);
+  }
+  // 横向木板缝（更细更密，带阴影）
+  CTX.strokeStyle="rgba(110,70,40,.30)";CTX.lineWidth=1;
+  for(let yy=18;yy<FLOOR_TOP;yy+=26){
+    CTX.beginPath();CTX.moveTo(0,yy);CTX.lineTo(W,yy);CTX.stroke();
+    CTX.fillStyle="rgba(255,240,210,.10)";CTX.fillRect(0,yy+1,W,1);
+  }
+  // 木纹（横向细纹，不每帧随机——用确定性伪随机）
+  CTX.strokeStyle="rgba(120,80,45,.12)";CTX.lineWidth=0.7;
+  for(let i=0;i<120;i++){
+    const mxx=(i*73)%W,myy=20+((i*97)%(FLOOR_TOP-40));
+    const wob=Math.sin(i*0.7)*6;
+    CTX.beginPath();CTX.moveTo(mxx,myy);CTX.quadraticCurveTo(mxx+40,myy+wob,mxx+80,myy);CTX.stroke();
+  }
+  // 木纹竖缝（固定，不每帧随机）
+  CTX.strokeStyle="rgba(110,70,40,.14)";CTX.lineWidth=1;
+  for(let i=0;i<14;i++){const lx=30+i*(W/14)+((i*53)%17);CTX.beginPath();CTX.moveTo(lx,10);CTX.lineTo(lx-8,10+FLOOR_TOP-20);CTX.stroke();}
+  // 房间顶部深灰屋檐包边（横梁，增加金属质感）
+  const beam=CTX.createLinearGradient(0,0,0,22);
+  beam.addColorStop(0,"#6a6d73");beam.addColorStop(.45,"#54575d");beam.addColorStop(1,"#3e4147");
+  CTX.fillStyle=beam;CTX.fillRect(0,0,W,22);
+  CTX.fillStyle="rgba(255,255,255,.08)";CTX.fillRect(0,2,W,2);
+  CTX.fillStyle="rgba(0,0,0,.18)";CTX.fillRect(0,18,W,3);
+  // 底部护墙线（踢脚，木色带高光）
+  CTX.fillStyle="#9a7a50";CTX.fillRect(0,FLOOR_TOP-9,W,9);
+  CTX.fillStyle="#7a5a38";CTX.fillRect(0,FLOOR_TOP-3,W,3);
+  CTX.fillStyle="rgba(255,240,210,.20)";CTX.fillRect(0,FLOOR_TOP-9,W,2);
+  // ===== 左侧红砖柱（带高光/阴影更立体）=====
+  const colx=0.08*W;
+  const brick=CTX.createLinearGradient(colx,0,colx+26,0);
+  brick.addColorStop(0,"#b05a48");brick.addColorStop(.5,"#a05040");brick.addColorStop(1,"#8a3a30");
+  CTX.fillStyle=brick;CTX.fillRect(colx,0,26,FLOOR_TOP);
+  // 砖缝
+  CTX.strokeStyle="rgba(60,25,20,.40)";CTX.lineWidth=1;
+  for(let yy=4;yy<FLOOR_TOP;yy+=12){CTX.beginPath();CTX.moveTo(colx,yy);CTX.lineTo(colx+26,yy);CTX.stroke();
+    CTX.beginPath();CTX.moveTo(colx+(yy%24?0:13),yy);CTX.lineTo(colx+(yy%24?0:13),yy+12);CTX.stroke();}
+  // 砖块微高光
+  CTX.fillStyle="rgba(255,180,150,.10)";
+  for(let yy=4;yy<FLOOR_TOP;yy+=12){CTX.fillRect(colx+1,yy+1,11,3);CTX.fillRect(colx+14,yy+1,11,3);}
+  // 柱侧阴影
+  CTX.fillStyle="rgba(0,0,0,.18)";CTX.fillRect(colx+22,0,4,FLOOR_TOP);
+  // 常青藤（攀爬更密，固定不闪烁）
+  CTX.strokeStyle="#3a7a3f";CTX.lineWidth=2;
+  for(let i=0;i<8;i++){const vy=40+i*38;CTX.beginPath();CTX.moveTo(colx+26,vy);CTX.quadraticCurveTo(colx+36+i*2,vy-18,colx+48+(i%3)*5,vy-36);CTX.stroke();}
+  CTX.fillStyle="#3f8a44";
+  for(let i=0;i<26;i++){const vx=colx+24+((i*13)%26)+2,vy=((i*37)%300)+18;CTX.beginPath();CTX.arc(vx,vy,5+((i*7)%5),0,Math.PI*2);CTX.fill();}
+  CTX.fillStyle="#2f6f34";
+  for(let i=0;i<16;i++){const vx=colx+24+((i*11)%22)+3,vy=((i*31)%290)+22;CTX.beginPath();CTX.arc(vx,vy,4+((i*5)%4),0,Math.PI*2);CTX.fill();}
+  CTX.fillStyle="#4a9a4f";
+  for(let i=0;i<10;i++){const vx=colx+24+((i*17)%20)+2,vy=((i*29)%280)+26;CTX.beginPath();CTX.arc(vx,vy,3,0,Math.PI*2);CTX.fill();}
+  // ===== 大落地窗（左+中）=====
+  const winL={x:0.22*W,y:60,w:0.30*W,h:196};
+  drawCity(winL,t);
+  // 玻璃反光（斜向高光）
+  CTX.fillStyle="rgba(255,255,255,.08)";
+  CTX.beginPath();CTX.moveTo(winL.x+8,winL.y+4);CTX.lineTo(winL.x+winL.w*0.3,winL.y+4);
+  CTX.lineTo(winL.x+winL.w*0.15,winL.y+winL.h-4);CTX.lineTo(winL.x+8,winL.y+winL.h-4);CTX.closePath();CTX.fill();
+  CTX.fillStyle="rgba(255,255,255,.05)";
+  CTX.beginPath();CTX.moveTo(winL.x+winL.w*0.6,winL.y+4);CTX.lineTo(winL.x+winL.w*0.8,winL.y+4);
+  CTX.lineTo(winL.x+winL.w*0.65,winL.y+winL.h-4);CTX.lineTo(winL.x+winL.w*0.6,winL.y+winL.h-4);CTX.closePath();CTX.fill();
+  // 深灰金属窗框（带高光）
+  CTX.strokeStyle="rgba(70,72,78,.95)";CTX.lineWidth=4;CTX.strokeRect(winL.x-4,winL.y-4,winL.w+8,winL.h+8);
+  CTX.strokeStyle="rgba(150,155,165,.5)";CTX.lineWidth=1;CTX.strokeRect(winL.x-3,winL.y-3,winL.w+6,winL.h+6);
+  CTX.strokeStyle="rgba(90,92,98,.7)";CTX.lineWidth=2;
+  CTX.beginPath();CTX.moveTo(winL.x+winL.w/3,winL.y);CTX.lineTo(winL.x+winL.w/3,winL.y+winL.h);CTX.stroke();
+  CTX.beginPath();CTX.moveTo(winL.x+winL.w*2/3,winL.y);CTX.lineTo(winL.x+winL.w*2/3,winL.y+winL.h);CTX.stroke();
+  CTX.beginPath();CTX.moveTo(winL.x,winL.y+winL.h/2);CTX.lineTo(winL.x+winL.w,winL.y+winL.h/2);CTX.stroke();
+  // 窗台（木色带高光）
+  CTX.fillStyle="#9a7a50";CTX.fillRect(winL.x-8,winL.y+winL.h,winL.w+16,8);
+  CTX.fillStyle="rgba(255,240,210,.25)";CTX.fillRect(winL.x-8,winL.y+winL.h,winL.w+16,2);
+  CTX.fillStyle="#6b4f3a";CTX.fillRect(winL.x-10,winL.y+winL.h+8,winL.w+20,4);
+  // ===== 垂直窄窗组（右侧木墙）=====
+  const nwX=0.86*W;
+  for(let i=0;i<4;i++){
+    const wxi=nwX+i*16;
+    drawCity({x:wxi,y:90,w:12,h:140},t);
+    CTX.fillStyle="rgba(255,255,255,.06)";CTX.fillRect(wxi+2,93,8,30);
+    CTX.strokeStyle="rgba(70,72,78,.95)";CTX.lineWidth=3;CTX.strokeRect(wxi-3,90-3,18,146);
+    CTX.strokeStyle="rgba(150,155,165,.4)";CTX.lineWidth=1;CTX.strokeRect(wxi-2,90-2,16,144);
+  }
+  CTX.fillStyle="#9a7a50";CTX.fillRect(nwX-6,232,70,7);
+  CTX.fillStyle="rgba(255,240,210,.2)";CTX.fillRect(nwX-6,232,70,2);
+  // ===== 门（木框玻璃门）=====
+  CTX.fillStyle="#7a5a38";CTX.fillRect(DOOR.x1,DOOR.y1,DOOR.x2-DOOR.x1,DOOR.y2-DOOR.y1);
+  CTX.strokeStyle="rgba(60,40,25,.5)";CTX.lineWidth=3;CTX.strokeRect(DOOR.x1,DOOR.y1,DOOR.x2-DOOR.x1,DOOR.y2-DOOR.y1);
+  drawCity({x:DOOR.x1+6,y:DOOR.y1+6,w:DOOR.x2-DOOR.x1-12,h:DOOR.y2-DOOR.y1-12},t);
+  CTX.fillStyle="rgba(255,255,255,.07)";
+  CTX.fillRect(DOOR.x1+8,DOOR.y1+8,12,DOOR.y2-DOOR.y1-16);
+  CTX.strokeStyle="rgba(90,60,35,.5)";CTX.lineWidth=2;
+  CTX.beginPath();CTX.moveTo(DOOR.x1,DOOR.y1+20);CTX.lineTo(DOOR.x2,DOOR.y1+20);CTX.stroke();
+  CTX.beginPath();CTX.moveTo(DOOR.x1,DOOR.y1+40);CTX.lineTo(DOOR.x2,DOOR.y1+40);CTX.stroke();
+  // 门把手（带光泽）
+  CTX.fillStyle="#ffd9a8";CTX.beginPath();CTX.arc(DOOR.x2-14,(DOOR.y1+DOOR.y2)/2,4,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#e8a850";CTX.beginPath();CTX.arc(DOOR.x2-14,(DOOR.y1+DOOR.y2)/2,2,0,Math.PI*2);CTX.fill();
+  // 门垫（编织）
+  CTX.fillStyle="rgba(150,110,60,.35)";rr(CTX,DOOR.x1-2,FLOOR_TOP-8,DOOR.x2-DOOR.x1+4,10,3);CTX.fill();
+  CTX.strokeStyle="rgba(120,85,45,.5)";CTX.lineWidth=1;rr(CTX,DOOR.x1,FLOOR_TOP-6,DOOR.x2-DOOR.x1,6,3);CTX.stroke();
+  CTX.strokeStyle="rgba(120,85,45,.3)";CTX.lineWidth=1;
+  for(let i=1;i<6;i++){CTX.beginPath();CTX.moveTo(DOOR.x1+6+i*8,FLOOR_TOP-6);CTX.lineTo(DOOR.x1+6+i*8,FLOOR_TOP-1);CTX.stroke();}
+  // ===== 左侧书架（木质）=====
+  shelf(0.13*W+10,170,150);
+  // 右侧墙挂相框
+  frame(0.98*W,170,58,74);
+  // 木牌招牌（立体木雕感）
+  const sx=0.48*W,sy=118;
+  CTX.save();
+  CTX.fillStyle="#5a3a1e";rr(CTX,sx-94,sy-62,188,64,10);CTX.fill();   // 阴影层
+  CTX.fillStyle="#7a5a38";rr(CTX,sx-90,sy-58,180,58,9);CTX.fill();    // 深边
+  CTX.fillStyle="#9a7a50";rr(CTX,sx-84,sy-52,168,46,7);CTX.fill();    // 牌面
+  // 木牌木纹
+  CTX.strokeStyle="rgba(90,60,30,.15)";CTX.lineWidth=1;
+  for(let i=0;i<6;i++){CTX.beginPath();CTX.moveTo(sx-78+i*26,sy-48);CTX.lineTo(sx-70+i*26,sy-10);CTX.stroke();}
+  CTX.fillStyle="rgba(255,240,210,.12)";CTX.fillRect(sx-84,sy-52,168,3);  // 顶部高光
+  CTX.font="bold 36px 'PingFang SC','Microsoft YaHei',sans-serif";CTX.textAlign="center";
+  CTX.fillStyle="#5a3a1e";CTX.fillText("小 八 木 屋",sx,sy-18);
+  CTX.font="bold 12px sans-serif";CTX.fillStyle="rgba(90,60,30,.85)";CTX.fillText("· 森 林 度 假 屋 ·",sx,sy+2);
+  // 木牌吊绳
+  CTX.strokeStyle="#3e4147";CTX.lineWidth=2;
+  CTX.beginPath();CTX.moveTo(sx-78,sy-58);CTX.lineTo(sx-78,sy-66);CTX.stroke();
+  CTX.beginPath();CTX.moveTo(sx+78,sy-58);CTX.lineTo(sx+78,sy-66);CTX.stroke();
+  CTX.fillStyle="#3e4147";CTX.fillRect(sx-80,sy-68,6,4);CTX.fillRect(sx+74,sy-68,6,4);
+  CTX.restore();
+  // ===== 电视（木柜上，加边框高光）=====
+  const tvX=0.26*W,tvY=140,tvW=0.12*W,tvH=104;
+  CTX.fillStyle="#9a7a50";CTX.fillRect(tvX-10,tvY-8,tvW+20,6);
+  CTX.fillStyle="#6b4f3a";CTX.fillRect(tvX-8,tvY-2,tvW+16,4);
+  CTX.fillStyle="#1a2436";CTX.fillRect(tvX-4,tvY,tvW+8,tvH);
+  CTX.fillStyle="#22304a";CTX.fillRect(tvX,tvY+2,tvW,tvH-2);
+  CTX.strokeStyle="rgba(90,110,150,.5)";CTX.lineWidth=1;CTX.strokeRect(tvX,tvY+2,tvW,tvH-2);
+  CTX.fillStyle=Math.random()<0.06?"#dfe8ff":"#2a3560";
+  CTX.fillRect(tvX+3,tvY+5,tvW-6,tvH-10);
+  for(let i=0;i<22;i++){CTX.fillStyle="rgba(140,200,255,"+rand(.05,.35)+")";CTX.fillRect(tvX+3+Math.random()*(tvW-6),tvY+5+Math.random()*(tvH-10),rand(6,26),1);}
+  CTX.fillStyle="#9bd6ff";CTX.font="bold 10px sans-serif";CTX.textAlign="center";CTX.fillText("▶ LIVE",tvX+tvW/2,tvY+tvH/2-6);
+  CTX.fillStyle="rgba(120,220,255,.8)";CTX.font="9px sans-serif";CTX.fillText("小八频道 24H",tvX+tvW/2,tvY+tvH/2+8);
+  // 电视柜脚
+  CTX.fillStyle="#5a3a1e";CTX.fillRect(tvX+4,tvY+tvH,5,8);CTX.fillRect(tvX+tvW-9,tvY+tvH,5,8);
+  // 大窗 + 窗帘（保留互动窗但改明亮浅色窗帘）
+  const win={x:0.66*W,y:86,w:0.22*W,h:164};
+  const curL=CTX.createLinearGradient(win.x-18,0,win.x+6,0);
+  curL.addColorStop(0,"#e8d5a0");curL.addColorStop(1,"rgba(232,213,160,0)");
+  CTX.fillStyle=curL;CTX.fillRect(win.x-18,win.y-10,24,win.h+24);
+  const curR=CTX.createLinearGradient(win.x+win.w-6,0,win.x+win.w+18,0);
+  curR.addColorStop(0,"rgba(232,213,160,0)");curR.addColorStop(1,"#e8d5a0");
+  CTX.fillStyle=curR;CTX.fillRect(win.x+win.w-6,win.y-10,24,win.h+24);
+  CTX.fillStyle="#c9a06b";CTX.fillRect(win.x-6,win.y-6,win.w+12,win.h+12);
+  drawCity(win,t);
+  CTX.strokeStyle="rgba(90,92,98,.55)";CTX.lineWidth=3;CTX.strokeRect(win.x-3,win.y-3,win.w+6,win.h+6);
+  CTX.strokeStyle="rgba(90,92,98,.4)";CTX.lineWidth=2;
+  CTX.beginPath();CTX.moveTo(win.x+win.w/2,win.y);CTX.lineTo(win.x+win.w/2,win.y+win.h);CTX.stroke();
+  CTX.beginPath();CTX.moveTo(win.x,win.y+win.h/2);CTX.lineTo(win.x+win.w,win.y+win.h/2);CTX.stroke();
+  CTX.fillStyle="#8a6a45";CTX.fillRect(win.x-10,win.y+win.h,win.w+20,7);
+  // 阳光光斑（窗台）
+  const shaft=CTX.createLinearGradient(0,win.y+win.h+7,0,FLOOR_TOP+90);
+  shaft.addColorStop(0,"rgba(255,240,180,.20)");shaft.addColorStop(1,"rgba(255,240,180,0)");
+  CTX.fillStyle=shaft;
+  CTX.beginPath();CTX.moveTo(win.x+10,win.y+win.h+7);CTX.lineTo(win.x+win.w-10,win.y+win.h+7);
+  CTX.lineTo(win.x+win.w+44,FLOOR_TOP+90);CTX.lineTo(win.x-34,FLOOR_TOP+90);CTX.closePath();CTX.fill();
+}
+function shelf(x,y,w){
+  // 木书架
+  CTX.fillStyle="#8a6a45";CTX.fillRect(x,y,w,5);
+  CTX.fillStyle="#6b4f3a";CTX.fillRect(x,y+5,w,3);
+  // 书
+  CTX.fillStyle="#e8b3a0";CTX.fillRect(x+8,y-14,7,14);
+  CTX.fillStyle="#6be3a0";CTX.fillRect(x+16,y-11,6,11);
+  CTX.fillStyle="#9bd6ff";CTX.fillRect(x+23,y-16,8,16);
+  CTX.fillStyle="#ffca6b";CTX.fillRect(x+34,y-12,7,12);
+  // 小猫相框
+  CTX.fillStyle="#c9a06b";CTX.fillRect(x+44,y-24,16,22);
+  CTX.fillStyle="#f2f2f7";CTX.beginPath();CTX.arc(x+52,y-13,5,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#181a22";CTX.beginPath();CTX.arc(x+51,y-14,2,0,Math.PI*2);CTX.fill();
+  // 小绿植
+  CTX.fillStyle="#8a6a45";rr(CTX,x+64,y-10,10,10,2);CTX.fill();
+  CTX.fillStyle="#3f8a44";CTX.beginPath();CTX.arc(x+69,y-13,5,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#8a6a45";CTX.fillRect(x,y+9,w,5);
+  CTX.fillStyle="#6b4f3a";CTX.fillRect(x,y+14,w,3);
+  CTX.fillStyle="#caa25c";CTX.fillRect(x+10,y-10,14,10);
+  CTX.fillStyle="#e8b3a0";CTX.fillRect(x+28,y-8,10,8);
+  CTX.fillStyle="#a0825a";CTX.fillRect(x+42,y-13,12,13);
+}
+function frame(x,y,w,h){
+  CTX.fillStyle="#8a6a45";CTX.fillRect(x-4,y-4,w+8,h+8);
+  CTX.fillStyle="#6b4f3a";CTX.fillRect(x,y,w,h);
+  // 猫剪影
+  CTX.fillStyle="#f2f2f7";CTX.beginPath();CTX.arc(x+w/2,y+h/2-4,10,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#181a22";CTX.beginPath();CTX.arc(x+w/2-2,y+h/2-5,3.5,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#181a22";CTX.beginPath();CTX.moveTo(x+w/2-9,y+h/2-14);CTX.lineTo(x+w/2-5,y+h/2-20);CTX.lineTo(x+w/2-2,y+h/2-13);CTX.closePath();CTX.fill();
+  CTX.fillStyle="#181a22";CTX.beginPath();CTX.moveTo(x+w/2+2,y+h/2-13);CTX.lineTo(x+w/2+5,y+h/2-20);CTX.lineTo(x+w/2+9,y+h/2-14);CTX.closePath();CTX.fill();
+}
+/* ===================== 地板（防腐木甲板+泳池·高清） ===================== */
+function drawFloor(){
+  // 浅色防腐木甲板
+  const g=CTX.createLinearGradient(0,FLOOR_TOP,0,H);
+  g.addColorStop(0,"#e0be8f");g.addColorStop(.5,"#d2a87a");g.addColorStop(1,"#b8936a");
+  CTX.fillStyle=g;CTX.fillRect(0,FLOOR_TOP,W,H-FLOOR_TOP);
+  // 甲板横向木板（透视，每块带独立渐变增强立体感）
+  CTX.strokeStyle="rgba(110,75,40,.35)";CTX.lineWidth=1.5;
+  for(let k=1;k<=18;k++){const y=k/18,a=project(0,y),b=project(1,y);
+    CTX.beginPath();CTX.moveTo(a.x,a.y);CTX.lineTo(b.x,b.y);CTX.stroke();
+    // 板缝下方高光
+    CTX.fillStyle="rgba(255,240,210,.08)";CTX.fillRect(a.x,a.y+1,b.x-a.x,1);}
+  // 甲板竖缝（每块木板）
+  CTX.strokeStyle="rgba(110,75,40,.18)";CTX.lineWidth=1;
+  for(let i=0;i<=25;i++){const x=i/25,a=project(x,0.02),b=project(x,1);
+    CTX.beginPath();CTX.moveTo(a.x,a.y);CTX.lineTo(b.x,b.y);CTX.stroke();}
+  // 木板微渐变（横向明暗）
+  for(let i=0;i<=25;i++){
+    const a=project(i/25,0.03),b=project((i+0.8)/25,0.03);
+    CTX.fillStyle="rgba(255,240,210,.05)";CTX.fillRect(a.x,a.y,10,b.y-a.y);
+  }
+  // 木纹斑点（固定，不每帧随机）
+  CTX.fillStyle="rgba(110,75,40,.12)";
+  for(let i=0;i<40;i++){const xi=((i*37)%97)/97,yi=0.04+((i*53)%94)/100;const p=project(xi,yi);
+    CTX.fillRect(p.x,p.y-1,4+(i%4)*2,1.5);}
+  // 钉孔（木甲板固定钉）
+  CTX.fillStyle="rgba(70,45,25,.5)";
+  for(let i=0;i<20;i++){const xi=((i*29)%95+2)/100,yi=0.04+((i*47)%92)/100;const p=project(xi,yi);
+    CTX.fillRect(p.x-1,p.y-1,2,2);}
+  // 木纹长曲线（年轮感）
+  CTX.strokeStyle="rgba(110,75,40,.08)";CTX.lineWidth=0.8;
+  for(let i=0;i<24;i++){const xi=((i*61)%90+5)/100,yi=0.05+((i*43)%90)/100;const p=project(xi,yi);
+    CTX.beginPath();CTX.moveTo(p.x-30,p.y);CTX.quadraticCurveTo(p.x-10,p.y-3,p.x+10,p.y);CTX.quadraticCurveTo(p.x+30,p.y+3,p.x+50,p.y);CTX.stroke();}
+  // 甲板反光（阳光下）
+  const gloss=CTX.createLinearGradient(0,FLOOR_TOP+30,0,H);
+  gloss.addColorStop(0,"rgba(255,240,200,.20)");gloss.addColorStop(.4,"rgba(255,240,200,.06)");gloss.addColorStop(1,"rgba(90,60,30,.22)");
+  CTX.fillStyle=gloss;CTX.fillRect(0,FLOOR_TOP,W,H-FLOOR_TOP);
+  // ===== 泳池（左下角，浅蓝色不规则池）=====
+  const pxl=0.10,pxr=0.30,pyt=0.22,pyb=0.52;
+  const pa=project(pxl,pyt),pb=project(pxr,pyt),pc=project(pxr,pyb),pd=project(pxl,pyb);
+  const pg2=CTX.createLinearGradient(0,pa.y,0,pc.y);
+  pg2.addColorStop(0,"#a8e6f8");pg2.addColorStop(.6,"#5cc0ec");pg2.addColorStop(1,"#3d9fd4");
+  CTX.fillStyle=pg2;
+  CTX.beginPath();CTX.moveTo(pa.x,pa.y);CTX.lineTo(pb.x,pb.y);CTX.lineTo(pc.x,pc.y);CTX.lineTo(pd.x,pd.y);CTX.closePath();CTX.fill();
+  // 泳池边框（白/浅色，带厚度）
+  CTX.strokeStyle="rgba(245,250,255,.95)";CTX.lineWidth=4;
+  CTX.strokeRect(pa.x,pa.y,pb.x-pa.x,pc.y-pa.y);
+  CTX.fillStyle="rgba(245,250,255,.5)";CTX.fillRect(pa.x,pa.y,pb.x-pa.x,3);CTX.fillRect(pa.x,pc.y-2,pb.x-pa.x,3);
+  // 池内底部格纹（马赛克）
+  CTX.strokeStyle="rgba(255,255,255,.12)";CTX.lineWidth=1;
+  for(let i=1;i<8;i++){const xx=pa.x+(pb.x-pa.x)*i/8;CTX.beginPath();CTX.moveTo(xx,pa.y);CTX.lineTo(xx,pc.y);CTX.stroke();}
+  for(let i=1;i<5;i++){const yy=pa.y+(pc.y-pa.y)*i/5;CTX.beginPath();CTX.moveTo(pa.x,yy);CTX.lineTo(pb.x,yy);CTX.stroke();}
+  // 水面波纹（更丰富）
+  CTX.strokeStyle="rgba(255,255,255,.5)";CTX.lineWidth=1.5;
+  for(let i=0;i<8;i++){const yy=pa.y+((pc.y-pa.y)*(i+0.5)/8),xx0=pa.x+8+((pb.x-pa.x)*0.08);
+    CTX.beginPath();CTX.moveTo(xx0,yy);
+    CTX.quadraticCurveTo(xx0+(pb.x-pa.x)*0.25,yy-4,xx0+(pb.x-pa.x)*0.5,yy);
+    CTX.quadraticCurveTo(xx0+(pb.x-pa.x)*0.75,yy+4,xx0+(pb.x-pa.x)*0.92,yy);CTX.stroke();}
+  // 池水高光 + 倒影光斑
+  CTX.fillStyle="rgba(255,255,255,.3)";
+  CTX.beginPath();CTX.ellipse((pa.x+pb.x)/2,pa.y+6,(pb.x-pa.x)*0.35,5,0,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="rgba(255,255,255,.15)";
+  CTX.beginPath();CTX.ellipse((pa.x+pb.x)/2,pc.y-6,(pb.x-pa.x)*0.2,3,0,0,Math.PI*2);CTX.fill();
+  // ===== 大花盆（玻璃门外，左下）——更多叶片层次 =====
+  obj(0.36,0.24,()=>{
+    CTX.fillStyle="#4a3b2a";rr(CTX,-16,0,32,24,5);CTX.fill();
+    CTX.fillStyle="#3a2d1e";rr(CTX,-20,-3,40,6,3);CTX.fill();
+    CTX.fillStyle="rgba(255,240,210,.08)";CTX.fillRect(-14,-2,28,2);
+    // 多层叶子
+    CTX.fillStyle="#2f6f34";CTX.beginPath();CTX.arc(-8,-14,8,0,Math.PI*2);CTX.fill();
+    CTX.fillStyle="#3f8a44";CTX.beginPath();CTX.arc(2,-18,10,0,Math.PI*2);CTX.fill();
+    CTX.fillStyle="#4a9a4f";CTX.beginPath();CTX.arc(-4,-22,7,0,Math.PI*2);CTX.fill();
+    CTX.fillStyle="#5aaa5a";CTX.beginPath();CTX.arc(6,-24,5,0,Math.PI*2);CTX.fill();
+  });
+  // ===== 八角形浴缸（右下角，浅蓝，带水纹）=====
+  obj(0.74,0.30,()=>{
+    CTX.fillStyle="#bfe6f2";CTX.beginPath();
+    CTX.moveTo(-24,-8);CTX.lineTo(-16,-18);CTX.lineTo(16,-18);CTX.lineTo(24,-8);
+    CTX.lineTo(24,6);CTX.lineTo(16,14);CTX.lineTo(-16,14);CTX.lineTo(-24,6);CTX.closePath();CTX.fill();
+    CTX.strokeStyle="#fff";CTX.lineWidth=3;CTX.stroke();
+    // 内部水面
+    CTX.fillStyle="#9fd8ef";
+    CTX.beginPath();CTX.moveTo(-18,-6);CTX.lineTo(-12,-14);CTX.lineTo(12,-14);CTX.lineTo(18,-6);CTX.closePath();CTX.fill();
+    CTX.strokeStyle="rgba(255,255,255,.6)";CTX.lineWidth=1;
+    CTX.beginPath();CTX.moveTo(-14,-10);CTX.lineTo(14,-10);CTX.stroke();
+    // 底部边框
+    CTX.fillStyle="#9bd0e0";CTX.fillRect(-18,4,36,5);
+    // 高光
+    CTX.fillStyle="rgba(255,255,255,.4)";CTX.fillRect(-16,-16,6,2);
+  });
+  // 保留原有淡色光斑（弱化）
+  pool(0.32*W,0.5*W,syOf(0.30),0.20,"rgba(255,240,200,0.06)");
+  pool(0.30*W,0.38*W,syOf(0.42),0.22,"rgba(255,240,200,0.06)");
+  pool(0.66*W,0.5*W,syOf(0.46),0.24,"rgba(255,240,200,0.05)");
+  pool(0.70*W,0.28*W,syOf(0.86),0.22,"rgba(255,220,180,0.10)");
+  pool(0.5*W,0.3*W,syOf(0.30),0.26,"rgba(255,220,180,0.08)");
+}
+function pool(cx,cw,cy,chh,c){
+  const g=CTX.createRadialGradient(cx,cy,0,cx,cy,Math.max(cw,chh)*2.2);
+  g.addColorStop(0,c);g.addColorStop(1,"rgba(0,0,0,0)");
+  CTX.fillStyle=g;
+  CTX.save();CTX.translate(cx,cy);CTX.scale(1,0.42);CTX.translate(-cx,-cy);
+  CTX.beginPath();CTX.ellipse(cx,cy,cw,chh,0,0,Math.PI*2);CTX.fill();CTX.restore();
+}
+/* ===================== 物件（世界坐标） ===================== */
+function obj(x,y,fn){const p=project(x,y);CTX.save();CTX.translate(p.x,p.y);CTX.scale(p.s,p.s);fn(p);CTX.restore();}
+function drawShadow(x,y,rw){
+  const p=project(x,y);
+  const g=CTX.createRadialGradient(p.x,p.y-2,0,p.x,p.y-2,rw*p.s);
+  g.addColorStop(0,"rgba(0,0,0,.5)");g.addColorStop(1,"rgba(0,0,0,0)");
+  CTX.fillStyle=g;CTX.beginPath();CTX.ellipse(p.x,p.y-2,rw*p.s,rw*p.s*0.34,0,0,Math.PI*2);CTX.fill();
+}
+function drawPlant(cx,cy,sc){
+  drawShadow(cx,cy,0.05);
+  CTX.save();CTX.translate(project(cx,cy).x,project(cx,cy).y);CTX.scale(project(cx,cy).s*sc,project(cx,cy).s*sc);
+  const x=0,y=-20;
+  CTX.fillStyle="#a06a45";rr(CTX,x-16,y+34,32,12,4);CTX.fill();
+  CTX.fillStyle="#c0825a";CTX.beginPath();CTX.moveTo(x-13,y+34);CTX.lineTo(x+2,y+24);CTX.lineTo(x+17,y+34);CTX.closePath();CTX.fill();
+  CTX.fillStyle="#a06a45";rr(CTX,x-12,y+24,24,10,4);CTX.fill();
+  for(let i=0;i<7;i++){const a=i*0.95,ln=20+Math.sin(i*3)*8;
+    CTX.strokeStyle="#3f8a44";CTX.lineWidth=4;CTX.lineCap="round";
+    CTX.beginPath();CTX.moveTo(x,y+24);CTX.quadraticCurveTo(x+Math.cos(a)*ln*0.5,y+10,x+Math.cos(a)*ln,y-Math.sin(a)*ln*0.4);CTX.stroke();
+    CTX.fillStyle=i%2?"#4a9a4f":"#3f8a44";
+    CTX.beginPath();CTX.arc(x+Math.cos(a)*ln,y-Math.sin(a)*ln*0.4,6,0,Math.PI*2);CTX.fill();}
+  CTX.restore();
+}
+function drawRug(){
+  const p=project(0.5,0.68);
+  CTX.save();CTX.translate(p.x,p.y);CTX.scale(p.s,p.s);
+  CTX.globalAlpha=0.9;
+  // 编织地毯——多层暖色 + 编织纹理
+  CTX.fillStyle="#d9a06a";rr(CTX,-132,-54,264,100,22);CTX.fill();
+  CTX.fillStyle="#c98e58";rr(CTX,-120,-42,240,76,18);CTX.fill();
+  CTX.strokeStyle="#e8c98a";CTX.lineWidth=4;rr(CTX,-114,-38,228,68,14);CTX.stroke();
+  CTX.strokeStyle="rgba(180,120,70,.6)";CTX.lineWidth=2;rr(CTX,-100,-26,200,44,10);CTX.stroke();
+  // 编织横纹
+  CTX.strokeStyle="rgba(180,120,70,.25)";CTX.lineWidth=1;
+  for(let i=-10;i<10;i++){CTX.beginPath();CTX.moveTo(-100+i*5,-24);CTX.lineTo(100+i*5,20);CTX.stroke();}
+  // 几何装饰（菱形+圆点）
+  CTX.strokeStyle="rgba(255,240,210,.5)";CTX.lineWidth=2;
+  CTX.beginPath();CTX.moveTo(0,-12);CTX.lineTo(12,0);CTX.lineTo(0,12);CTX.lineTo(-12,0);CTX.closePath();CTX.stroke();
+  CTX.fillStyle="#fff6e0";CTX.beginPath();CTX.arc(0,-6,5,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#7bffc0";CTX.beginPath();CTX.arc(10,10,3,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#ff9f8a";CTX.beginPath();CTX.arc(-12,8,3,0,Math.PI*2);CTX.fill();
+  // 流苏边
+  CTX.fillStyle="rgba(217,160,106,.8)";
+  for(let i=-10;i<=10;i++){CTX.fillRect(i*13-2,-53,3,4);CTX.fillRect(i*13-2,50,3,4);}
+  CTX.globalAlpha=1;CTX.restore();
+}
+function drawFeed(t){
+  drawShadow(ZONE.FEED.x+0.07,0.64,0.075);
+  const x=0,y=-8;
+  // 木托盘底垫（木纹）
+  CTX.fillStyle="#8a6a45";rr(CTX,x-62,y-4,124,12,6);CTX.fill();
+  CTX.strokeStyle="rgba(90,60,30,.5)";CTX.strokeRect(x-62,y-4,124,12);
+  CTX.fillStyle="rgba(255,240,210,.12)";CTX.fillRect(x-60,y-3,120,2);
+  CTX.strokeStyle="rgba(90,60,30,.15)";CTX.lineWidth=1;
+  for(let i=1;i<8;i++){CTX.beginPath();CTX.moveTo(x-58+i*16,y-2);CTX.lineTo(x-56+i*16,y+6);CTX.stroke();}
+  // 猫粮碗（陶瓷白带高光）
+  CTX.fillStyle="#f4f4f0";CTX.beginPath();CTX.ellipse(x-26,y-14,18,9,0,Math.PI,0);CTX.fill();
+  CTX.fillStyle="#dcd8d0";CTX.beginPath();CTX.ellipse(x-26,y-13,17,7,0,Math.PI,0);CTX.fill();
+  CTX.fillStyle="#caa25c";CTX.fillRect(x-33,y-16,6,3);CTX.fillRect(x-23,y-16,6,3);
+  CTX.fillStyle="rgba(255,255,255,.4)";CTX.fillRect(x-34,y-17,8,2);
+  // 水碗 + 气泡 + 水面高光
+  CTX.fillStyle="#9fd8ff";CTX.beginPath();CTX.ellipse(x+26,y-15,16,8,0,Math.PI,0);CTX.fill();
+  CTX.fillStyle="#5a9fd4";CTX.beginPath();CTX.ellipse(x+26,y-14,15,7,0,Math.PI,0);CTX.fill();
+  CTX.fillStyle="rgba(255,255,255,.5)";CTX.beginPath();CTX.ellipse(x+24,y-16,5,2,0,0,Math.PI*2);CTX.fill();
+  if(Math.floor(t*2)%2===0){CTX.fillStyle="#dff0ff";CTX.beginPath();CTX.arc(x+24,y-20,2,0,Math.PI*2);CTX.fill();}
+  // 粮桶（木桶质感）
+  CTX.fillStyle="#a0784f";rr(CTX,x-58,y-34,22,30,5);CTX.fill();
+  CTX.fillStyle="#8a6240";rr(CTX,x-58,y-40,22,7,4);CTX.fill();
+  CTX.fillStyle="#caa25c";rr(CTX,x-54,y-32,14,8,2);CTX.fill();
+  CTX.strokeStyle="rgba(90,60,30,.3)";CTX.lineWidth=1;
+  CTX.beginPath();CTX.moveTo(x-58,y-20);CTX.lineTo(x-36,y-20);CTX.stroke();
+  CTX.beginPath();CTX.moveTo(x-58,y-12);CTX.lineTo(x-36,y-12);CTX.stroke();
+  // 名牌
+  CTX.fillStyle="#c9a06b";rr(CTX,x-8,y-40,46,10,3);CTX.fill();
+  CTX.fillStyle="#5a3a1e";CTX.font="bold 8px sans-serif";CTX.textAlign="center";CTX.fillText("小八的食盆",x+15,y-32.5);
+}
+function drawLitter(){
+  drawShadow(ZONE.LITTER.x+0.07,0.68,0.075);
+  const x=0,y=-8;
+  // 木制底盘
+  CTX.fillStyle="#a0825a";rr(CTX,x-46,y-6,92,12,6);CTX.fill();
+  CTX.fillStyle="rgba(255,240,210,.10)";CTX.fillRect(x-44,y-5,88,2);
+  // 盆身（木色+上下渐变）
+  const bg=CTX.createLinearGradient(0,y-34,0,y-8);
+  bg.addColorStop(0,"#c99c72");bg.addColorStop(1,"#a0825a");
+  CTX.fillStyle=bg;rr(CTX,x-42,y-34,84,26,8);CTX.fill();
+  CTX.fillStyle="rgba(0,0,0,.08)";rr(CTX,x-42,y-18,84,8,5);CTX.fill();
+  // 盆沿高光
+  CTX.fillStyle="rgba(255,240,210,.18)";rr(CTX,x-42,y-34,84,4,6);CTX.fill();
+  // 猫砂（颗粒）
+  CTX.fillStyle="#caa25c";for(let i=0;i<10;i++)CTX.fillRect(x-20+i*5,y-16,2,3);
+  CTX.fillStyle="#e0c880";for(let i=0;i<6;i++)CTX.fillRect(x-17+i*6,y-15,1.5,2);
+  // 小铲子（靠盆边）
+  CTX.fillStyle="#8a6240";CTX.fillRect(x+28,y-18,2,12);
+  CTX.fillStyle="#6b4f3a";CTX.fillRect(x+24,y-20,10,3);
+  // 绿植盆栽（旁）
+  CTX.fillStyle="#8a6240";rr(CTX,x+22,y-40,12,10,2);CTX.fill();
+  CTX.fillStyle="#3f8a44";CTX.beginPath();CTX.arc(x+28,y-43,6,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#4a9a4f";CTX.beginPath();CTX.arc(x+26,y-45,3.5,0,Math.PI*2);CTX.fill();
+}
+function drawBed(){
+  drawShadow(ZONE.BED.x+0.08,0.9,0.095);
+  const x=0,y=-12;
+  // 木床头板（带木纹高光）
+  CTX.fillStyle="#8a6a45";rr(CTX,x-58,y-46,116,8,4);CTX.fill();
+  CTX.fillStyle="rgba(255,240,210,.15)";CTX.fillRect(x-58,y-45,116,2);
+  CTX.fillStyle="#6b4f3a";rr(CTX,x-58,y-38,14,40,4);CTX.fill();
+  CTX.fillStyle="#6b4f3a";rr(CTX,x+44,y-38,14,40,4);CTX.fill();
+  CTX.fillStyle="rgba(255,240,210,.10)";CTX.fillRect(x-58,y-37,14,2);CTX.fillRect(x+44,y-37,14,2);
+  // 床头软垫（米色，格纹缝线）
+  CTX.fillStyle="#e8d5a0";rr(CTX,x-54,y-34,108,12,6);CTX.fill();
+  CTX.strokeStyle="rgba(200,160,110,.5)";CTX.lineWidth=1;
+  for(let i=1;i<6;i++){CTX.beginPath();CTX.moveTo(x-54+i*20,y-33);CTX.lineTo(x-54+i*20,y-23);CTX.stroke();}
+  // 箱体（木色带阴影）
+  CTX.fillStyle="#a0825a";rr(CTX,x-52,y-22,104,18,6);CTX.fill();
+  CTX.fillStyle="rgba(0,0,0,.10)";rr(CTX,x-52,y-10,104,6,4);CTX.fill();
+  CTX.strokeStyle="rgba(90,60,30,.2)";CTX.lineWidth=1;
+  CTX.beginPath();CTX.moveTo(x-52,y-16);CTX.lineTo(x+52,y-16);CTX.stroke();
+  // 床垫
+  CTX.fillStyle="#f4f0e6";rr(CTX,x-50,y-20,100,13,5);CTX.fill();
+  CTX.fillStyle="rgba(0,0,0,.05)";rr(CTX,x-50,y-10,100,3,3);CTX.fill();
+  // 枕头（带阴影褶皱）
+  CTX.fillStyle="#fffdf6";rr(CTX,x-44,y-24,48,13,6);CTX.fill();
+  CTX.strokeStyle="rgba(150,130,100,.35)";CTX.lineWidth=1.5;
+  CTX.beginPath();CTX.moveTo(x-32,y-18);CTX.lineTo(x-14,y-18);CTX.stroke();
+  CTX.fillStyle="rgba(255,255,255,.4)";CTX.beginPath();CTX.ellipse(x-38,y-23,6,2,0,0,Math.PI*2);CTX.fill();
+  // 被子（暖橙格 + 布料纹理）
+  CTX.fillStyle="#c97a5a";rr(CTX,x-52,y-8,104,13,4);CTX.fill();
+  CTX.fillStyle="#e09a6a";rr(CTX,x-4,y-8,48,13,4);CTX.fill();
+  CTX.strokeStyle="rgba(255,230,190,.25)";CTX.lineWidth=1;
+  CTX.beginPath();CTX.moveTo(x-52,y-6);CTX.lineTo(x+52,y-6);CTX.stroke();
+  CTX.beginPath();CTX.moveTo(x-52,y-3);CTX.lineTo(x+52,y-3);CTX.stroke();
+  // 被角折线
+  CTX.strokeStyle="rgba(255,230,190,.5)";CTX.lineWidth=2;
+  CTX.beginPath();CTX.moveTo(x-52,y-2);CTX.lineTo(x+52,y-2);CTX.stroke();
+  // 小玩具挂床沿
+  CTX.fillStyle="#7bffc0";CTX.beginPath();CTX.arc(x+42,y-22,4,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="rgba(255,255,255,.5)";CTX.beginPath();CTX.arc(x+41,y-23,1.5,0,Math.PI*2);CTX.fill();
+}
+function drawNightstand(){
+  drawShadow(0.72,0.9,0.055);
+  const p=project(0.72,0.9);
+  CTX.save();CTX.translate(p.x,p.y);CTX.scale(p.s,p.s);
+  const x=0,y=-8;
+  // 木柜面（带高光）
+  CTX.fillStyle="#8a6a45";rr(CTX,x-26,y-24,52,6,3);CTX.fill();
+  CTX.fillStyle="rgba(255,240,210,.12)";CTX.fillRect(x-26,y-23,52,2);
+  CTX.fillStyle="#6b4f3a";CTX.fillRect(x-22,y-18,7,22);CTX.fillRect(x+15,y-18,7,22);
+  CTX.fillStyle="rgba(255,240,210,.08)";CTX.fillRect(x-22,y-18,7,2);CTX.fillRect(x+15,y-18,7,2);
+  CTX.fillStyle="#4a3b2a";CTX.fillRect(x-24,y+4,48,5);
+  CTX.fillStyle="rgba(255,240,210,.08)";CTX.fillRect(x-24,y+4,48,1);
+  // 杯子（带高光）
+  CTX.fillStyle="#e8d5a0";rr(CTX,x-12,y-34,12,10,3);CTX.fill();
+  CTX.fillStyle="#caa25c";CTX.fillRect(x-11,y-35,10,2);
+  CTX.fillStyle="rgba(255,255,255,.35)";CTX.fillRect(x-11,y-33,2,6);
+  // 小夜灯（带光晕+底座）
+  CTX.save();CTX.shadowColor="rgba(255,220,160,.9)";CTX.shadowBlur=14;
+  CTX.fillStyle="#ffd9a8";CTX.beginPath();CTX.arc(x+16,y-32,5,0,Math.PI*2);CTX.fill();CTX.restore();
+  CTX.fillStyle="#3a4560";CTX.fillRect(x+13,y-28,6,8);
+  CTX.fillStyle="#4a5a70";CTX.fillRect(x+11,y-21,10,3);
+  CTX.fillStyle="rgba(255,220,160,.15)";CTX.beginPath();CTX.arc(x+16,y-32,16,0,Math.PI*2);CTX.fill();
+  CTX.restore();
+}
+function drawWindowSeat(){
+  drawShadow(ZONE.BALC.x,0.5,0.08);
+  const x=0,y=-8;
+  // 木窗台（带木纹）
+  CTX.fillStyle="#8a6a45";rr(CTX,x-70,y-8,140,10,5);CTX.fill();
+  CTX.fillStyle="rgba(255,240,210,.12)";CTX.fillRect(x-70,y-7,140,2);
+  // 软垫（米色格纹）
+  CTX.fillStyle="#d9a06a";rr(CTX,x-64,y-22,128,14,7);CTX.fill();
+  CTX.strokeStyle="rgba(160,110,60,.5)";CTX.lineWidth=1.5;
+  for(let i=1;i<6;i++){CTX.beginPath();CTX.moveTo(x-64+i*20,y-21);CTX.lineTo(x-64+i*20,y-9);CTX.stroke();}
+  CTX.fillStyle="rgba(255,240,210,.12)";CTX.fillRect(x-62,y-21,124,2);
+  // 靠垫（带高光）
+  CTX.fillStyle="#f4e0b8";rr(CTX,x+28,y-21,38,13,6);CTX.fill();
+  CTX.fillStyle="#e8c98a";rr(CTX,x+34,y-19,26,8,4);CTX.fill();
+  CTX.fillStyle="rgba(255,255,255,.3)";CTX.beginPath();CTX.ellipse(x+40,y-20,5,2,0,0,Math.PI*2);CTX.fill();
+  // 小盆栽（陶土+多层叶）
+  CTX.fillStyle="#8a6240";rr(CTX,x-66,y-34,16,14,3);CTX.fill();
+  CTX.fillStyle="#3f8a44";CTX.beginPath();CTX.arc(x-58,y-40,7,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#4a9a4f";CTX.beginPath();CTX.arc(x-56,y-43,4,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#2f6f34";CTX.beginPath();CTX.arc(x-64,y-36,5,0,Math.PI*2);CTX.fill();
+}
+function drawCatTree(){
+  drawShadow(0.87,0.56,0.075);
+  const p=project(0.87,0.56);
+  CTX.save();CTX.translate(p.x,p.y);CTX.scale(p.s,p.s);
+  const x=0,y=0;
+  // 立柱（木色带高光）
+  CTX.fillStyle="#8a6240";rr(CTX,x-5,y-96,10,96,5);CTX.fill();
+  CTX.fillStyle="rgba(255,240,210,.10)";CTX.fillRect(x-3,y-96,2,96);
+  // 平台（木色，带阴影）
+  CTX.fillStyle="#a0784f";rr(CTX,x-40,y-108,80,9,4);CTX.fill();
+  CTX.fillStyle="rgba(0,0,0,.12)";rr(CTX,x-40,y-102,80,3,3);CTX.fill();
+  CTX.fillStyle="#b0865a";rr(CTX,x-30,y-126,60,9,4);CTX.fill();
+  CTX.fillStyle="rgba(0,0,0,.12)";rr(CTX,x-30,y-120,60,3,3);CTX.fill();
+  CTX.fillStyle="#8a6a45";rr(CTX,x-44,y-88,88,8,4);CTX.fill();
+  CTX.fillStyle="#8a6a45";rr(CTX,x-34,y-106,68,8,4);CTX.fill();
+  CTX.fillStyle="#8a6a45";rr(CTX,x-24,y-124,48,8,4);CTX.fill();
+  // 木纹细节
+  CTX.strokeStyle="rgba(90,60,30,.2)";CTX.lineWidth=1;
+  for(const ly of [-88,-106,-124]){CTX.beginPath();CTX.moveTo(x-40,ly+3);CTX.lineTo(x+40,ly+3);CTX.stroke();}
+  // 顶球（带光晕）
+  CTX.fillStyle="#ffca6b";CTX.beginPath();CTX.arc(x,y-132,7,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#fff";CTX.beginPath();CTX.arc(x-2,y-134,2.5,0,Math.PI*2);CTX.fill();
+  // 吊球（带高光）
+  CTX.strokeStyle="rgba(255,255,255,.5)";CTX.lineWidth=1;
+  CTX.beginPath();CTX.moveTo(x+36,y-96);CTX.lineTo(x+36,y-74);CTX.stroke();
+  CTX.fillStyle="#7bffc0";CTX.beginPath();CTX.arc(x+36,y-72,5,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="rgba(255,255,255,.6)";CTX.beginPath();CTX.arc(x+35,y-73,1.5,0,Math.PI*2);CTX.fill();
+  CTX.restore();
+}
+function drawToys(){
+  drawShadow(ZONE.TOYS.x+0.08,0.86,0.06);
+  const p=project(ZONE.TOYS.x+0.08,0.86);
+  CTX.save();CTX.translate(p.x,p.y);CTX.scale(p.s,p.s);
+  const x=0,y=-4;
+  // 毛线球（带纹理）
+  CTX.fillStyle="#ff9f8a";CTX.beginPath();CTX.arc(x-14,y-6,11,0,Math.PI*2);CTX.fill();
+  CTX.strokeStyle="#e0695a";CTX.lineWidth=1.5;CTX.beginPath();CTX.arc(x-14,y-6,11,0.4,Math.PI-0.4);CTX.stroke();
+  CTX.strokeStyle="#e0695a";CTX.lineWidth=1;
+  CTX.beginPath();CTX.arc(x-14,y-6,7,0.6,Math.PI*0.8);CTX.stroke();
+  CTX.fillStyle="#fff";CTX.beginPath();CTX.arc(x-17,y-9,2.5,0,Math.PI*2);CTX.fill();
+  // 逗猫棒（羽毛杆+球）
+  CTX.fillStyle="#ffca6b";CTX.fillRect(x-2,y-12,24,8);
+  CTX.strokeStyle="#caa25c";CTX.lineWidth=2;CTX.beginPath();CTX.moveTo(x+2,y-12);CTX.lineTo(x+2,y-28);CTX.stroke();
+  CTX.fillStyle="#fff";CTX.beginPath();CTX.arc(x+2,y-32,4,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#ffca6b";CTX.beginPath();CTX.arc(x+2,y-32,2,0,Math.PI*2);CTX.fill();
+  // 玩具鱼
+  CTX.fillStyle="#6be3a0";CTX.beginPath();CTX.moveTo(x+30,y-6);CTX.lineTo(x+38,y-2);CTX.lineTo(x+30,y+2);CTX.closePath();CTX.fill();
+  CTX.fillStyle="#4ac35a";CTX.beginPath();CTX.moveTo(x+38,y-2);CTX.lineTo(x+44,y-4);CTX.lineTo(x+42,y+1);CTX.closePath();CTX.fill();
+  // 小纸箱
+  CTX.fillStyle="#3ec8f0";CTX.fillRect(x-30,y-10,12,9);
+  CTX.fillStyle="#2f7fa8";CTX.fillRect(x-30,y-10,12,2);
+  CTX.strokeStyle="#2f7fa8";CTX.lineWidth=1;CTX.strokeRect(x-30,y-10,12,9);
+  CTX.restore();
+}
+function drawCarrier(){
+  drawShadow(ZONE.BAG.x+0.06,0.82,0.06);
+  const p=project(ZONE.BAG.x+0.06,0.82);
+  CTX.save();CTX.translate(p.x,p.y);CTX.scale(p.s,p.s);
+  const x=0,y=-22;
+  // 猫包主体（蓝色带高光）
+  const cbg=CTX.createLinearGradient(0,y-16,0,y+4);
+  cbg.addColorStop(0,"#4ec8f0");cbg.addColorStop(1,"#2f7fa8");
+  CTX.fillStyle=cbg;rr(CTX,x-28,y-16,56,15,7);CTX.fill();
+  CTX.fillStyle="rgba(255,255,255,.25)";rr(CTX,x-24,y-15,20,3,5);CTX.fill();
+  // 透气窗（网眼）
+  CTX.fillStyle="#2f6a8a";rr(CTX,x-24,y-10,48,11,5);CTX.fill();
+  CTX.fillStyle="#cfeaff";CTX.fillRect(x-18,y-12,36,5);
+  CTX.strokeStyle="rgba(20,40,70,.6)";CTX.lineWidth=1;
+  for(let i=0;i<7;i++){CTX.beginPath();CTX.moveTo(x-16+i*6,y-11);CTX.lineTo(x-16+i*6,y-3);CTX.stroke();}
+  // 提手（带高光）
+  CTX.strokeStyle="rgba(20,40,70,.7)";CTX.lineWidth=3;
+  CTX.beginPath();CTX.moveTo(x-18,y-30);CTX.quadraticCurveTo(x,y-42,x+18,y-30);CTX.stroke();
+  CTX.strokeStyle="rgba(255,255,255,.3)";CTX.lineWidth=1;
+  CTX.beginPath();CTX.moveTo(x-16,y-30);CTX.quadraticCurveTo(x,y-40,x+16,y-30);CTX.stroke();
+  // 门扣 + 名牌
+  CTX.fillStyle="#e8d5a0";CTX.beginPath();CTX.arc(x,y-2,6,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#8a6a45";CTX.beginPath();CTX.arc(x,y-2,4,0,Math.PI*2);CTX.fill();
+  CTX.fillStyle="#c99c72";CTX.fillRect(x-28,y+3,56,4);
+  CTX.fillStyle="rgba(255,240,210,.15)";CTX.fillRect(x-28,y+3,56,1);
+  CTX.restore();
+}
+function drawTVConsole(){
+  drawShadow(0.30,0.56,0.06);
+  const p=project(0.30,0.56);
+  CTX.save();CTX.translate(p.x,p.y);CTX.scale(p.s,p.s);
+  const x=0,y=-10;
+  // 木柜（带高光+阴影）
+  CTX.fillStyle="#8a6a45";rr(CTX,x-54,y-18,108,18,5);CTX.fill();
+  CTX.fillStyle="rgba(255,240,210,.12)";CTX.fillRect(x-52,y-17,104,2);
+  CTX.fillStyle="rgba(0,0,0,.10)";rr(CTX,x-54,y-6,108,4,3);CTX.fill();
+  CTX.strokeStyle="rgba(90,60,30,.35)";CTX.lineWidth=1.5;
+  CTX.beginPath();CTX.moveTo(x-44,y-9);CTX.lineTo(x+44,y-9);CTX.stroke();
+  CTX.fillStyle="#6b4f3a";CTX.fillRect(x-46,y-7,20,6);CTX.fillRect(x-16,y-7,20,6);CTX.fillRect(x+14,y-7,20,6);
+  CTX.fillStyle="rgba(255,240,210,.08)";CTX.fillRect(x-46,y-7,20,1);CTX.fillRect(x-16,y-7,20,1);CTX.fillRect(x+14,y-7,20,1);
+  // 柜上摆件：金色小摆件 + 绿植
+  CTX.fillStyle="#ffca6b";rr(CTX,x+30,y-30,16,10,3);CTX.fill();
+  CTX.fillStyle="#e8a850";CTX.fillRect(x+32,y-27,4,4);
+  CTX.fillStyle="#3f8a44";CTX.fillRect(x-40,y-28,12,8);
+  CTX.fillStyle="#4a9a4f";CTX.beginPath();CTX.arc(x-34,y-30,4,0,Math.PI*2);CTX.fill();
+  CTX.strokeStyle="rgba(90,60,30,.2)";CTX.lineWidth=1;
+  CTX.beginPath();CTX.moveTo(x-40,y-20);CTX.lineTo(x-28,y-20);CTX.stroke();
+  CTX.restore();
+}
+/* ===================== 小八（圆润卡通奶牛小猫） ===================== */
+function poseFor(){
+  const stt=st.cat.state,an=st.cat.anim;
+  const P={bodyX:0,bodyY:-16,bob:0,tilt:0,legs:[0,0],
+    headX:2.5,headY:-37,headR:14,headTilt:0,
+    tail:-0.6,closed:false,lie:false,down:false,pawUp:false};
+  if(stt==="walk"){P.bob=Math.abs(Math.sin(an*9))*2.4;P.legs=[Math.sin(an*9)*6,Math.sin(an*9+Math.PI)*6];
+    P.tilt=Math.sin(an*9)*0.05;P.tail=-1.3+Math.sin(an*7)*0.35;P.headX=2.5;}
+  else if(stt==="eat"){P.headY=-33;P.headTilt=0.14;P.tail=-0.5;P.headX=3;}
+  else if(stt==="poop"){P.legs=[5,-5];P.tail=-1.8;P.bodyY=-13;P.headX=2;}
+  else if(stt==="sleep"){P.lie=true;P.closed=true;P.tail=0.1;}
+  else if(stt==="sit"){P.legs=[0,0];P.bodyY=-19;P.tail=0.9;P.headX=2;}
+  else if(stt==="play"){P.bodyY=-11;P.tail=-2;P.down=true;P.headX=3;}
+  else if(stt==="hand"){P.pawUp=true;P.tail=1.3;P.headX=2;}
+  else if(stt==="cuddle"){P.headTilt=0.3;P.tail=1.5;P.headX=4;P.headY=-35;}
+  else if(stt==="tv"){P.legs=[0,0];P.bodyY=-18;P.headTilt=0.12;P.tail=0.6;P.headX=4;}
+  else if(stt==="bag"){P.legs=[0,0];P.bodyY=-15;P.headX=3;}
+  else if(stt==="idle"){P.tail=Math.sin(performance.now()/700)*0.2;P.headX=2;}
+  if(st.cat.blink>0){P.closed=true;}
+  return P;
+}
+function bobExtra(p){return p.bob*(p.lie?0.3:1);}
+function catPath(P){
+  const PX=CTX,ts=performance.now()/1000;
+  const bodyX=P.bodyX, bodyY=P.bodyY+bobExtra(P);
+  const BLACK="#1c1e26",WHITE="#f6f4f0",SHADE="#e3ded6",PINK="#f4a9c0";
+  if(P.lie){catLie(P);return;}
+  // 尾巴（蓬松，黑尖）
+  PX.lineCap="round";
+  PX.strokeStyle=BLACK;PX.lineWidth=10;
+  PX.beginPath();PX.moveTo(-20,bodyY-8);
+  PX.quadraticCurveTo(-32,bodyY-14+Math.sin(ts*2+P.tail)*6,-36,bodyY-1+Math.cos(ts*1.8+P.tail)*11);
+  PX.stroke();
+  PX.fillStyle=BLACK;PX.beginPath();PX.arc(-36,bodyY-1+Math.cos(ts*1.8+P.tail)*11,5,0,Math.PI*2);PX.fill();
+  // 后腿（黑短粗）
+  for(let i=0;i<2;i++){
+    const s=(i===0?P.legs[0]:P.legs[1])*0.55,lx=-12+i*2;
+    PX.strokeStyle=BLACK;PX.lineWidth=11;
+    PX.beginPath();PX.moveTo(lx,bodyY+5);PX.lineTo(lx+s,bodyY+15);PX.stroke();
+    PX.fillStyle=BLACK;PX.beginPath();PX.ellipse(lx+s,bodyY+15,6,4.5,0,0,Math.PI*2);PX.fill();
+  }
+  // 身体（圆胖+渐变+背斑+白肚）
+  PX.save();PX.translate(bodyX,bodyY);PX.rotate(P.tilt);
+  const bg=PX.createRadialGradient(-6,-8,4,0,0,26);
+  bg.addColorStop(0,"#fdfbf8");bg.addColorStop(1,SHADE);
+  PX.fillStyle=bg;PX.beginPath();PX.ellipse(0,0,23,17,0,0,Math.PI*2);PX.fill();
+  // 奶牛斑：背部主斑 + 后臀斑 + 小碎斑
+  PX.fillStyle=BLACK;PX.beginPath();PX.ellipse(0,-5,10,6,0.2,0,Math.PI*2);PX.fill();
+  PX.fillStyle=BLACK;PX.beginPath();PX.ellipse(-10,2,5,4,0.3,0,Math.PI*2);PX.fill();
+  PX.fillStyle=BLACK;PX.beginPath();PX.arc(7,-6,3,0,Math.PI*2);PX.fill();
+  PX.fillStyle="rgba(255,255,255,.55)";PX.beginPath();PX.ellipse(-1,7,13,7,0,0,Math.PI*2);PX.fill();
+  PX.restore();
+  // 前腿（白，圆掌）
+  for(let i=0;i<2;i++){
+    const s=(i===0?P.legs[0]:P.legs[1])*0.5,lx=9+i*4;
+    if(P.pawUp&&i===0){
+      PX.strokeStyle=WHITE;PX.lineWidth=10;
+      PX.beginPath();PX.moveTo(lx,bodyY+4);PX.lineTo(lx+8,bodyY-8);PX.stroke();
+      PX.fillStyle=BLACK;PX.beginPath();PX.ellipse(lx+8,bodyY-8,6,5,0,0,Math.PI*2);PX.fill();
+    }else{
+      PX.strokeStyle=WHITE;PX.lineWidth=11;
+      PX.beginPath();PX.moveTo(lx,bodyY+5);PX.lineTo(lx+s,bodyY+15);PX.stroke();
+      PX.fillStyle="#f2efe9";PX.beginPath();PX.ellipse(lx+s,bodyY+15,6,4.5,0,0,Math.PI*2);PX.fill();
+      PX.strokeStyle="rgba(40,40,50,.22)";PX.lineWidth=1;
+      PX.beginPath();PX.arc(lx+s,bodyY+15,4,0,Math.PI*2);PX.stroke();
+    }
+  }
+  // 头
+  const hx=P.headX,hy=P.headY,R=P.headR;
+  // 耳朵（黑外粉内，在头后）
+  for(const s of[-1,1]){
+    const ex=hx+s*R*0.45,ey=hy-R*0.7;
+    PX.fillStyle=BLACK;
+    PX.beginPath();
+    PX.moveTo(ex-s*5,ey);
+    PX.quadraticCurveTo(ex,ey-R*1.2,ex+s*13,ey-R*0.95);
+    PX.quadraticCurveTo(ex+s*9,ey-R*0.4,ex+s*8,ey);
+    PX.closePath();PX.fill();
+    PX.fillStyle=PINK;
+    PX.beginPath();
+    PX.moveTo(ex-s*2,ey+1);
+    PX.quadraticCurveTo(ex,ey-R*0.85,ex+s*8,ey-R*0.65);
+    PX.quadraticCurveTo(ex+s*5,ey-R*0.35,ex+s*3,ey+1);
+    PX.closePath();PX.fill();
+  }
+  // 头（渐变圆）
+  const hg=PX.createRadialGradient(hx-4,hy-4,3,hx,hy,16);
+  hg.addColorStop(0,"#fdfbf8");hg.addColorStop(1,SHADE);
+  PX.fillStyle=hg;PX.beginPath();PX.arc(hx,hy,R,0,Math.PI*2);PX.fill();
+  // 对称「八字脸」：黑色八字斑在眼睛上方和两侧（像刘海），中间白色中分，眼睛下方脸颊白色
+  PX.fillStyle=BLACK;
+  // 左八字（眼睛上方）
+  PX.beginPath();
+  PX.moveTo(hx-R,hy-R*0.2);
+  PX.quadraticCurveTo(hx-R*1.05,hy-R*0.92,hx-R*0.55,hy-R*1.0);
+  PX.quadraticCurveTo(hx-R*0.3,hy-R*1.0,hx-R*0.34,hy-R*0.42);
+  PX.quadraticCurveTo(hx-R*0.32,hy-R*0.12,hx-R*0.3,hy-R*0.0);
+  PX.quadraticCurveTo(hx-R*0.42,hy+0.5,hx-R*0.6,hy+0.55);
+  PX.quadraticCurveTo(hx-R*0.9,hy+0.45,hx-R*0.98,hy-R*0.2);
+  PX.closePath();PX.fill();
+  // 右八字（眼睛上方）
+  PX.beginPath();
+  PX.moveTo(hx+R,hy-R*0.2);
+  PX.quadraticCurveTo(hx+R*1.05,hy-R*0.92,hx+R*0.55,hy-R*1.0);
+  PX.quadraticCurveTo(hx+R*0.3,hy-R*1.0,hx+R*0.34,hy-R*0.42);
+  PX.quadraticCurveTo(hx+R*0.32,hy-R*0.12,hx+R*0.3,hy-R*0.0);
+  PX.quadraticCurveTo(hx+R*0.42,hy+0.5,hx+R*0.6,hy+0.55);
+  PX.quadraticCurveTo(hx+R*0.9,hy+0.45,hx+R*0.98,hy-R*0.2);
+  PX.closePath();PX.fill();
+  // 眼睛（两只大眼+高光）
+  const eyeY=hy+1.5,eyeDX=R*0.42,eyeR=4.2;
+  PX.save();PX.rotate(P.headTilt);
+  for(const s of[-1,1]){
+    const ex=hx+s*eyeDX;
+    if(P.closed){
+      PX.strokeStyle=BLACK;PX.lineWidth=2.2;PX.lineCap="round";
+      PX.beginPath();PX.arc(ex,eyeY,eyeR,0.2,Math.PI-0.2);PX.stroke();
+    }else{
+      PX.fillStyle="#fff";PX.beginPath();PX.ellipse(ex,eyeY,eyeR,eyeR*1.12,0,0,Math.PI*2);PX.fill();
+      PX.fillStyle="#c9b45c";PX.beginPath();PX.arc(ex,eyeY+0.4,3.1,0,Math.PI*2);PX.fill();
+      PX.fillStyle="#1f2b1f";PX.beginPath();PX.arc(ex+0.4,eyeY+0.6,1.8,0,Math.PI*2);PX.fill();
+      PX.fillStyle="#fff";PX.beginPath();PX.arc(ex-1.3,eyeY-1.2,1.5,0,Math.PI*2);PX.fill();
+      PX.fillStyle="rgba(255,255,255,.7)";PX.beginPath();PX.arc(ex+1.1,eyeY+1.3,0.7,0,Math.PI*2);PX.fill();
+      // 黑色眼线：上下各一条细弧
+      PX.strokeStyle="rgba(20,20,30,.9)";PX.lineWidth=1.2;PX.lineCap="round";
+      PX.beginPath();PX.ellipse(ex,eyeY-0.3,eyeR*1.06,eyeR*1.28,0,Math.PI*1.12,Math.PI*1.88);PX.stroke();
+      PX.beginPath();PX.ellipse(ex,eyeY+0.2,eyeR*1.02,eyeR*1.2,0,Math.PI*0.12,Math.PI*0.88);PX.stroke();
+    }
+  }
+  PX.restore();
+  // 鼻+嘴（精致倒三角粉鼻）
+  PX.fillStyle="#f87fa5";
+  PX.beginPath();PX.moveTo(hx-2.1,hy+4);PX.lineTo(hx+2.1,hy+4);PX.lineTo(hx,hy+6.2);PX.closePath();PX.fill();
+  PX.strokeStyle=BLACK;PX.lineWidth=1.3;PX.lineCap="round";
+  PX.beginPath();PX.moveTo(hx,hy+6.6);PX.lineTo(hx,hy+8);PX.stroke();
+  PX.beginPath();PX.moveTo(hx,hy+8);PX.quadraticCurveTo(hx-2.6,hy+10.4,hx-5,hy+8);PX.stroke();
+  PX.beginPath();PX.moveTo(hx,hy+8);PX.quadraticCurveTo(hx+2.6,hy+10.4,hx+5,hy+8);PX.stroke();
+  // 胡须
+  PX.strokeStyle="rgba(70,70,85,.5)";PX.lineWidth=1.1;
+  for(let i=0;i<2;i++){
+    PX.beginPath();PX.moveTo(hx-8,hy+(i?7:4));PX.lineTo(hx-19,hy+(i?9:5));PX.stroke();
+    PX.beginPath();PX.moveTo(hx+8,hy+(i?7:4));PX.lineTo(hx+19,hy+(i?9:5));PX.stroke();
+  }
+  // 项圈
+  PX.strokeStyle="#3ec8f0";PX.lineWidth=3.4;
+  PX.beginPath();PX.arc(hx,hy+9,8.5,0.3*Math.PI,0.7*Math.PI);PX.stroke();
+  PX.fillStyle="#ffca6b";PX.beginPath();PX.arc(hx,hy+11,3,0,Math.PI*2);PX.fill();
+}
+function catLie(P){
+  const PX=CTX,ts=performance.now()/1000;
+  const BLACK="#1c1e26",WHITE="#f6f4f0",SHADE="#e3ded6",PINK="#f4a9c0";
+  const cx=P.bodyX,cy=P.bodyY+6;
+  // 蜷尾
+  PX.strokeStyle=BLACK;PX.lineWidth=9;PX.lineCap="round";
+  PX.beginPath();PX.moveTo(cx-24,cy-2);
+  PX.quadraticCurveTo(cx-40,cy-6+Math.sin(ts)*2,cx-38,cy+8);PX.stroke();
+  PX.fillStyle=BLACK;PX.beginPath();PX.arc(cx-38,cy+8,5,0,Math.PI*2);PX.fill();
+  // 身体面包卷
+  const bg=PX.createRadialGradient(cx-8,cy-8,4,cx,cy,26);
+  bg.addColorStop(0,"#fbf9f5");bg.addColorStop(1,SHADE);
+  PX.fillStyle=bg;rr(PX,cx-26,cy-14,52,20,12);PX.fill();
+  PX.fillStyle=BLACK;rr(PX,cx-20,cy-12,20,11,7);PX.fill();
+  // 头
+  const hx=cx+14,hy=cy-8,R=13;
+  const hg=PX.createRadialGradient(hx-4,hy-4,3,hx,hy,16);
+  hg.addColorStop(0,"#fdfbf8");hg.addColorStop(1,SHADE);
+  PX.fillStyle=hg;PX.beginPath();PX.arc(hx,hy,R,0,Math.PI*2);PX.fill();
+  // 八字脸（黑斑在眼睛上方和两侧，中间白中分）
+  PX.fillStyle=BLACK;
+  PX.beginPath();
+  PX.moveTo(hx-R,hy-R*0.15);
+  PX.quadraticCurveTo(hx-R*1.02,hy-R*0.88,hx-R*0.55,hy-R*0.95);
+  PX.quadraticCurveTo(hx-R*0.32,hy-R*0.96,hx-R*0.36,hy-R*0.4);
+  PX.quadraticCurveTo(hx-R*0.34,hy-R*0.1,hx-R*0.32,hy-R*0.0);
+  PX.quadraticCurveTo(hx-R*0.44,hy+0.5,hx-R*0.6,hy+0.55);
+  PX.quadraticCurveTo(hx-R*0.9,hy+0.45,hx-R*0.98,hy-R*0.15);
+  PX.closePath();PX.fill();
+  PX.beginPath();
+  PX.moveTo(hx+R,hy-R*0.15);
+  PX.quadraticCurveTo(hx+R*1.02,hy-R*0.88,hx+R*0.55,hy-R*0.95);
+  PX.quadraticCurveTo(hx+R*0.32,hy-R*0.96,hx+R*0.36,hy-R*0.4);
+  PX.quadraticCurveTo(hx+R*0.34,hy-R*0.1,hx+R*0.32,hy-R*0.0);
+  PX.quadraticCurveTo(hx+R*0.44,hy+0.5,hx+R*0.6,hy+0.55);
+  PX.quadraticCurveTo(hx+R*0.9,hy+0.45,hx+R*0.98,hy-R*0.15);
+  PX.closePath();PX.fill();
+  // 耳
+  for(const s of[-1,1]){
+    PX.fillStyle=BLACK;
+    PX.beginPath();PX.moveTo(hx+s*R*0.5,hy-R*0.8);PX.lineTo(hx+s*R*1.2,hy-R-6);PX.lineTo(hx+s*R*1.3,hy-R*0.2);PX.closePath();PX.fill();
+    PX.fillStyle=PINK;
+    PX.beginPath();PX.moveTo(hx+s*R*0.6,hy-R*0.6);PX.lineTo(hx+s*R*1.05,hy-R-3.5);PX.lineTo(hx+s*R*1.1,hy-R*0.4);PX.closePath();PX.fill();
+  }
+  // 闭眼
+  PX.strokeStyle=BLACK;PX.lineWidth=2;PX.lineCap="round";
+  for(const s of[-1,1]){PX.beginPath();PX.arc(hx+s*R*0.42,hy-1,4,0.2,Math.PI-0.2);PX.stroke();}
+  // 鼻
+  PX.fillStyle="#f87fa5";
+  PX.beginPath();PX.moveTo(hx-1.9,hy+2);PX.lineTo(hx+1.9,hy+2);PX.lineTo(hx,hy+4);PX.closePath();PX.fill();
+}
+function catPos(){return project(st.cat.x,st.cat.y);}
+function drawCat(){
+  const p=catPos(),P=poseFor();
+  // 柔软落地阴影（贴合猫大小）
+  CTX.save();
+  CTX.translate(p.x,p.y+2*p.s);
+  const sg=CTX.createRadialGradient(0,0,0,0,0,30*p.s);
+  sg.addColorStop(0,"rgba(0,0,0,.22)");sg.addColorStop(1,"rgba(0,0,0,0)");
+  CTX.fillStyle=sg;
+  CTX.beginPath();CTX.ellipse(0,0,26*p.s,6*p.s,0,0,Math.PI*2);CTX.fill();
+  CTX.restore();
+  CTX.save();CTX.translate(p.x,p.y);CTX.scale(st.cat.face*p.s,p.s);
+  catPath(P);
+  CTX.restore();
+}
+function drawCatReflect(){
+  const p=catPos(),P=poseFor();
+  CTX.save();CTX.translate(p.x,p.y);CTX.scale(st.cat.face*p.s,-p.s);
+  CTX.globalAlpha=0.12;catPath(P);
+  CTX.globalAlpha=1;CTX.restore();
+}
+/* ===================== 交互 ===================== */
+function anyOverlay(){return ["Profile","Show","Survey","Copy","Follow"].some(o=>ui("ov"+o).classList.contains("show"));}
+function zoneCenter(k){const z=ZONE[k];return {x:z.x+z.w/2,y:z.y+z.h/2};}
+function startAction(mode,target){
+  stopAction();
+  st.mode=mode;st.target=target;st.walking=true;st.cat.state="walk";st.noticeShown=false;
+}
+function stopAction(){
+  st.mode=null;st.target=null;st.walking=false;st.pendingFood=null;
+  if(st.cat.state!=="idle")st.cat.state="idle";
+}
+function walkTo(x,y){
+  if(y<WALKMIN||y>WALKMAX)return;
+  stopAction();
+  st.target={x:clamp(x,WMARGIN,1-WMARGIN),y:clamp(y,WALKMIN,WALKMAX)};
+  st.walking=true;st.cat.state="walk";
+}
+function orderFood(key){
+  const f=FOODS[key];if(!f)return;
+  ui("feedbox").classList.remove("show");
+  st.pendingFood=f;
+  const c=zoneCenter("FEED");
+  startAction("feed",{x:c.x+0.02,y:c.y});
+  notif("🍚 "+f.n,"#7bffc0",f.type==="snack"?"优质辅食，加分更高":"主食 · 粗蛋白≥38%");
+  sfx.click();
+}
+function startToilet(){const c=zoneCenter("LITTER");startAction("toilet",{x:c.x,y:c.y});notif("🧻 小八前往定点如厕","#9bd6ff");}
+function startPlay(){const c=zoneCenter("TOYS");startAction("play",{x:c.x+0.03,y:c.y});notif("🧸 小八去玩具区啦","#ffca6b");}
+function startSleep(){
+  const b=zoneCenter("BED"),a=zoneCenter("BALC");
+  const toBed=Math.hypot(st.cat.x-b.x,st.cat.y-b.y)<Math.hypot(st.cat.x-a.x,st.cat.y-a.y);
+  startAction("sleep",{x:toBed?b.x:a.x,y:toBed?b.y:a.y});
+  notif(toBed?"🛏 小八钻进精致大床":"🌙 小八在飘窗软座看夜景入眠","#9bd6ff");
+  sfx.sleep();
+}
+function startTV(){const c=zoneCenter("TV");startAction("tv",{x:c.x,y:c.y});notif("📺 小八陪你一起看电视","#7bc0ff");sfx.tv();}
+function startBag(){const c=zoneCenter("BAG");startAction("bag",{x:c.x,y:c.y});notif("👕 小八跳进封闭猫包","#7bc0ff");}
+function pet(){addAff(POINTS.pet);st.cat.anim=rand(0,9);
+  const now=performance.now();if(now-st.petCd>1400){st.petCd=now;notif("🤗 呼噜呼噜……舒服","#ffca6b");sfx.purr();}
+  floaty("+"+POINTS.pet,"#7bffc0");}
+function cleanPoop(){if(!st.poop)return;st.poop=null;addAff(POINTS.clean);notif("🧹 清理完成 +"+POINTS.clean,"#7bffc0");sfx.clean();}
+function floaty(txt,color){
+  if(st.floats.length<8){const p=catPos();st.floats.push({x:p.x,y:p.y-30,t:0,text:txt,color:color||"#fff"});}
+}
+function spark(x,y,c){st.parts.push({x,y,vx:rand(-2,2),vy:rand(-3,-0.5),t:0,c});}
+function bubble(txt,color){st.bubble=txt;st.bubbleT=0;st.bubbleColor=color||"#fff";}
+function onTap(sx,sy){
+  initAudio();
+  if(anyOverlay())return;
+  if(sy<FLOOR_TOP){
+    if(sx>DOOR.x1&&sx<DOOR.x2&&sy>DOOR.y1){notif("🚪 外面是森林，但小八还没打疫苗，不能随意出门哦","#ffca6b");sfx.click();}
+    return;
+  }
+  const w=unproject(sx,sy);
+  if(st.poop&&Math.hypot(w.x-st.poop.x,w.y-st.poop.y)<0.07){cleanPoop();return;}
+  for(const k of ZKEYS){
+    const z=ZONE[k];
+    if(w.x>z.x&&w.x<z.x+z.w&&w.y>z.y&&w.y<z.y+z.h){
+      if(k==="FEED"){openFeed();}
+      else if(k==="LITTER")startToilet();
+      else if(k==="TOYS")startPlay();
+      else if(k==="BED"||k==="BALC")startSleep();
+      else if(k==="TV")startTV();
+      else if(k==="BAG")startBag();
+      return;
+    }
+  }
+  const dc=Math.hypot(w.x-st.cat.x,w.y-st.cat.y);
+  if(dc<0.06){
+    // 点击小八：打开展示页并自动播放视频，同时提升好感
+    openShowVideo();
+    if(st.lv>=3){st.cat.face=w.x>st.cat.x?1:-1;startAction("cuddle",{x:st.cat.x,y:st.cat.y});notif("🥰 小八贴贴撒娇","#ff9f8a");}
+    else if(st.lv>=2){startAction("hand",{x:st.cat.x,y:st.cat.y});notif("🐾 小八等你伸出手","#7bffc0");}
+    else pet();
+    return;
+  }
+  walkTo(w.x,w.y);
+}
+function openShowVideo(){
+  // 打开展示弹窗并自动播放视频
+  openOverlay("Show");
+  const v=ui("catVideo");
+  if(v){
+    v.style.display="block";
+    const ph=ui("videoPh");if(ph)ph.style.display="none";
+    const p=v.play();
+    if(p){p.catch(()=>{v.muted=true;v.play().catch(()=>{});});}
+    else{v.muted=true;v.play().catch(()=>{});}
+  }
+  sfx.tv();
+}
+function openFeed(){const fb=ui("feedbox");fb.classList.toggle("show");st.feedJustOpened=performance.now();if(fb.classList.contains("show"))sfx.click();}
+const foods=document.querySelectorAll(".food");
+foods.forEach(fd=>fd.addEventListener("click",e=>{const k=fd.getAttribute("data-key");if(!k)return;e.stopPropagation();orderFood(k);}));
+document.addEventListener("click",e=>{
+  const fb=ui("feedbox");
+  if(!fb.classList.contains("show"))return;
+  if(fb.contains(e.target))return;
+  if(performance.now()-st.feedJustOpened<200)return;
+  fb.classList.remove("show");
+});
+let downX=0,downY=0,moved=false;
+view.addEventListener("pointerdown",e=>{downX=e.clientX;downY=e.clientY;moved=false;});
+view.addEventListener("pointermove",e=>{
+  if(!moved&&Math.hypot(e.clientX-downX,e.clientY-downY)>8)moved=true;
+  if(!moved){
+    const r=view.getBoundingClientRect();
+    const w=unproject((e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H);
+    let found=false;
+    for(const k of ZKEYS){const z=ZONE[k];if(w.x>z.x&&w.x<z.x+z.w&&w.y>z.y&&w.y<z.y+z.h){found=true;break;}}
+    view.style.cursor=found?"pointer":(w.y>0.33&&w.x>0.04&&w.x<0.96?"pointer":"crosshair");
+  }});
+view.addEventListener("pointerup",e=>{
+  if(moved)return;
+  const r=view.getBoundingClientRect();
+  onTap((e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H);
+});
+window.addEventListener("resize",fit);
+/* —— WASD / 方向键 控制小八移动 —— */
+const KEYMAP={"w":"w","a":"a","s":"s","d":"d","arrowup":"ArrowUp","arrowdown":"ArrowDown","arrowleft":"ArrowLeft","arrowright":"ArrowRight"};
+window.addEventListener("keydown",e=>{
+  const k=KEYMAP[(e.key||"").toLowerCase()];
+  if(!k)return;
+  e.preventDefault();
+  st.keys=[...new Set([...st.keys,k])];
+  st.keyMode=true;
+  if(st.mode)stopAction();
+});
+window.addEventListener("keyup",e=>{
+  const k=KEYMAP[(e.key||"").toLowerCase()];
+  if(!k)return;
+  e.preventDefault();
+  st.keys=st.keys.filter(x=>x!==k);
+  if(st.keys.length===0)st.keyMode=false;
+});
+function toggleKeyMode(){
+  st.keys=[];
+  st.keyMode=!st.keyMode;
+  const b=ui("keyBtn");
+  if(b){b.classList.toggle("on",st.keyMode);b.textContent=st.keyMode?"⌨️ WASD ✓":"⌨️ WASD";}
+  const h=ui("wasdHint");
+  if(h)h.classList.toggle("hide",!st.keyMode);
+  const dp=ui("dpad");
+  if(dp)dp.classList.toggle("show",st.keyMode);
+  notif(st.keyMode?"⌨️ 键盘控制已开启：WASD / 方向键移动小八":"🖱 已切回点击控制", st.keyMode?"#7bffc0":"#9bd6ff");
+  sfx.click();
+}
+/* —— 屏幕虚拟方向键（触屏）—— */
+(function(){
+  const dp=ui("dpad");
+  if(!dp)return;
+  dp.querySelectorAll("button").forEach(btn=>{
+    const k=btn.getAttribute("data-k");
+    function press(e){e.preventDefault();st.keys=[...new Set([...st.keys,k])];st.keyMode=true;if(st.mode)stopAction();}
+    function release(e){e.preventDefault();st.keys=st.keys.filter(x=>x!==k);}
+    btn.addEventListener("pointerdown",press);
+    btn.addEventListener("pointerup",release);
+    btn.addEventListener("pointerleave",release);
+    btn.addEventListener("pointercancel",release);
+    btn.addEventListener("touchstart",press,{passive:false});
+    btn.addEventListener("touchend",release,{passive:false});
+  });
+})();
+/* ===================== 更新 ===================== */
+function autoToilet(){
+  if(st.mode)return;
+  if(["eat","hand","cuddle","tv"].includes(st.cat.state))return;
+  const c=zoneCenter("LITTER");
+  startAction("toilet",{x:c.x,y:c.y});
+}
+function autoIdle(){
+  const r=Math.random();
+  if(r<0.25){const c=zoneCenter("TOYS");startAction("play",{x:c.x,y:c.y});}
+  else if(r<0.45){const c=zoneCenter("BALC");startAction("sleep",{x:c.x,y:c.y});}
+  else if(r<0.65){const c=zoneCenter("BED");startAction("sleep",{x:c.x,y:c.y});}
+  else if(r<0.82){const c=zoneCenter("TV");startAction("tv",{x:c.x,y:c.y});}
+  else{const c=zoneCenter("LITTER");if(Math.random()<0.6)startAction("toilet",{x:c.x,y:c.y});}
+}
+function unlock(lv){
+  let msg="🎉 好感升级 Lv"+lv+" · "+LV[lv].name;
+  const sub=lv===2?"解锁：握手":lv===3?"解锁：贴贴撒娇":lv===4?"解锁全套顺从动作 · 现实里的小八就是这般温顺听话的缩影":"";
+  notif(msg,"#ffca6b",sub);
+  sfx.level();
+  const f=ui("flash");f.classList.add("on");setTimeout(()=>f.classList.remove("on"),700);
+  st.shock=8;
+}
+function update(dt,t){
+  const o=st.cat;o.anim+=dt;
+  if(o.blink>0)o.blink-=dt;if(Math.random()<0.006)o.blink=0.16;
+  // —— WASD / 方向键 键盘控制移动 ——
+  if(st.keys&&st.keys.length>0){
+    if(st.mode)stopAction();
+    st.walking=false;st.target=null;
+    let dx=0,dy=0;
+    if(st.keys.includes("w")||st.keys.includes("ArrowUp"))dy-=1;
+    if(st.keys.includes("s")||st.keys.includes("ArrowDown"))dy+=1;
+    if(st.keys.includes("a")||st.keys.includes("ArrowLeft"))dx-=1;
+    if(st.keys.includes("d")||st.keys.includes("ArrowRight"))dx+=1;
+    if(dx||dy){
+      const sp=0.22*dt;
+      o.x=clamp(o.x+dx*sp,WMARGIN,1-WMARGIN);
+      o.y=clamp(o.y+dy*sp,WALKMIN,WALKMAX);
+      if(dx>0)o.face=1;if(dx<0)o.face=-1;
+      o.state="walk";
+    }else{o.state="idle";}
+  }
+  if(st.walking&&st.target){
+    const dx=st.target.x-o.x,dy=st.target.y-o.y,d=Math.hypot(dx,dy);
+    const sp=0.16*dt;
+    if(d<0.004){o.x=st.target.x;o.y=st.target.y;st.walking=false;if(!st.mode)o.state="idle";}
+    else{o.x+=dx/d*sp;o.y+=dy/d*sp;if(Math.abs(dx)>0.001)o.face=dx>0?1:-1;o.state="walk";}
+  }
+  if(st.mode&&!st.walking){
+    const A=st.mode,t0=A.t0||(A.t0=t);
+    const el=t-t0;
+    if(A==="feed"){
+      if(!st.pendingFood){stopAction();}
+      else if(el<500){o.state="walk";}
+      else if(el<1800){o.state="eat";}
+      else{const f=st.pendingFood;addAff(f.score);notif("🍽 吃完啦 +"+f.score,"#7bffc0",f.n);floaty("+"+f.score,"#7bffc0");sfx.eat();stopAction();o.state="idle";}
+    }
+    else if(A==="toilet"){
+      if(el<500){o.state="walk";}
+      else if(el<1800){o.state="poop";if(el>1100&&!st.noticeShown){st.noticeShown=true;bubble("💩 喵~","#ffca6b");}}
+      else{st.poop={x:zoneCenter("LITTER").x+0.02,y:zoneCenter("LITTER").y+0.03};
+        st.toiletTimer=0;addAff(POINTS.toilet);notif("💩 小八排便完毕，等你清理","#ffca6b","点粪便一键清理 · 久不清理好感会下降");
+        stopAction();o.state="idle";setObjective("🧻 点击粪便清理，否则好感缓慢下降");}
+    }
+    else if(A==="play"){
+      if(el<500){o.state="walk";}
+      else if(el<1800){o.state="play";if(Math.floor(el/240)%2===0){const c=zoneCenter("TOYS");spark(project(c.x,c.y).x,project(c.x,c.y).y-40,"#ffca6b");}}
+      else{addAff(POINTS.play);floaty("+"+POINTS.play,"#ffca6b");notif("🧸 玩得很开心 +"+POINTS.play,"#ffca6b");stopAction();o.state="idle";}
+    }
+    else if(A==="sleep"){
+      if(el<500){o.state="walk";}
+      else if(el<2200){o.state="sleep";if(el>700&&!st.noticeShown){st.noticeShown=true;bubble("💤","#9bd6ff");}}
+      else{addAff(POINTS.sleep);notif("😴 安静入睡 +"+POINTS.sleep,"#9bd6ff");stopAction();o.state="idle";}
+    }
+    else if(A==="hand"){
+      if(el<450){o.state="walk";}
+      else if(el<1600){o.state="hand";if(el>1000&&!st.noticeShown){st.noticeShown=true;bubble("🖐 握手！","#7bffc0");}}
+      else{addAff(POINTS.hand);floaty("+"+POINTS.hand,"#7bffc0");notif("🖐 主动握手 +"+POINTS.hand,"#7bffc0");stopAction();o.state="idle";}
+    }
+    else if(A==="cuddle"){
+      if(el<450){o.state="walk";}
+      else if(el<1700){o.state="cuddle";if(el>950&&!st.noticeShown){st.noticeShown=true;bubble("🥰 贴贴","#ff9f8a");spark(project(st.cat.x,st.cat.y).x,project(st.cat.x,st.cat.y).y-40,"#ff9f8a");}}
+      else{addAff(POINTS.cuddle);floaty("+"+POINTS.cuddle,"#ff9f8a");notif("🥰 贴贴撒娇 +"+POINTS.cuddle,"#ff9f8a");stopAction();o.state="idle";}
+    }
+    else if(A==="tv"){
+      if(el<500){o.state="walk";}
+      else if(el<1900){o.state="tv";}
+      else{addAff(POINTS.tv);notif("📺 陪看结束 +"+POINTS.tv,"#7bc0ff");stopAction();o.state="idle";}
+    }
+    else if(A==="bag"){
+      if(el<450){o.state="walk";}
+      else if(el<1500){o.state="bag";}
+      else{addAff(POINTS.bag);notif("👕 乖乖待着 +"+POINTS.bag,"#7bc0ff");stopAction();o.state="idle";}
+    }
+  }
+  if(!st.poop){st.toiletTimer+=dt;if(st.toiletTimer>=40){st.toiletTimer=0;autoToilet();}}
+  if(st.poop)addAff(-0.05*dt);
+  st.autoT-=dt;
+  if(st.autoT<=0){st.autoT=rand(20,36);if(!st.mode&&!st.walking&&!st.poop)autoIdle();}
+  const lv=lvOf(st.score);
+  if(lv>st.lv){unlock(lv);}st.lv=lv;
+  if(st.bubble){st.bubbleT+=dt;if(st.bubbleT>2.2)st.bubble=null;}
+  for(let i=st.floats.length-1;i>=0;i--){const f=st.floats[i];f.t+=dt;f.y-=20*dt;if(f.t>1.5)st.floats.splice(i,1);}
+  for(let i=st.parts.length-1;i>=0;i--){const p=st.parts[i];p.t+=dt;p.x+=p.vx*60*dt;p.y+=p.vy*60*dt;p.vy+=120*dt;if(p.t>0.7)st.parts.splice(i,1);}
+  if(st.shock>0)st.shock-=dt;
+  st.hintTimer+=dt;
+  if(st.hintTimer>12){st.hintTimer=0;
+    setObjective(Math.random()<0.5?"🐾 点击喂食台 / 玩具 / 飘窗陪它玩":"💡 好感 Lv2 解锁握手 · Lv3 贴贴 · Lv4 全套顺从动作");}
+  updateHUD();
+}
+/* ===================== 绘制主循环 ===================== */
+function draw(){
+  const t=performance.now()/1000;
+  CTX.clearRect(0,0,W,H);
+  if(st.shock>0){CTX.translate((Math.random()-0.5)*4,(Math.random()-0.5)*4);}
+  drawFloor();
+  drawWall(t);
+  drawCatReflect();
+  const items=[];
+  items.push({y:ZONE.FEED.y,fn:()=>drawFeed(t)});
+  items.push({y:ZONE.LITTER.y,fn:drawLitter});
+  items.push({y:ZONE.BED.y,fn:drawBed});
+  items.push({y:0.90,fn:drawNightstand});
+  items.push({y:ZONE.BALC.y,fn:drawWindowSeat});
+  items.push({y:0.56,fn:drawCatTree});
+  items.push({y:ZONE.TOYS.y,fn:drawToys});
+  items.push({y:ZONE.BAG.y,fn:drawCarrier});
+  items.push({y:0.56,fn:drawTVConsole});
+  items.push({y:0.68,fn:drawRug});
+  items.push({y:0.72,fn:()=>drawPlant(0.20,0.72,0.9)});
+  items.push({y:0.74,fn:()=>drawPlant(0.60,0.74,1.1)});
+  if(st.poop)items.push({y:st.poop.y,fn:()=>{drawShadow(st.poop.x,st.poop.y,0.03);
+    const p=project(st.poop.x,st.poop.y);
+    CTX.fillStyle="#5a3a2a";CTX.fillRect(p.x-4*p.s,p.y-2,8*p.s,5);CTX.fillStyle="#7a4f35";CTX.fillRect(p.x-2*p.s,p.y,4*p.s,3);
+    CTX.strokeStyle="rgba(255,180,120,.7)";CTX.lineWidth=1;const pl=Math.sin(t*4)*1.5;CTX.strokeRect(p.x-5*p.s+pl,p.y-4,12*p.s,10);}});
+  items.push({y:st.cat.y,fn:()=>drawCat()});
+  items.sort((a,b)=>a.y-b.y);
+  for(const it of items)it.fn();
+  drawLights(t);
+  drawLift();
+  if(st.bubble){const p=catPos();
+    CTX.save();CTX.translate(p.x,p.y-46*p.s);CTX.scale(0.7+Math.min(0.3,st.bubbleT*0.5),0.7+Math.min(0.3,st.bubbleT*0.5));
+    CTX.font="bold 18px 'PingFang SC'";CTX.textAlign="center";
+    CTX.fillStyle="rgba(255,250,240,.95)";rr(CTX,-34,-16,68,30,12);CTX.fill();
+    CTX.strokeStyle="rgba(160,120,70,.5)";CTX.stroke();
+    CTX.fillStyle=st.bubbleColor;CTX.fillText(st.bubble,0,5);
+    CTX.restore();}
+  CTX.textAlign="center";CTX.font="bold 17px 'PingFang SC'";
+  for(const f of st.floats){CTX.globalAlpha=Math.max(0,1-f.t/1.5);CTX.fillStyle=f.color;CTX.fillText(f.text,f.x,f.y);}
+  CTX.globalAlpha=1;
+  for(const p of st.parts){CTX.globalAlpha=Math.max(0,1-p.t/0.7);CTX.fillStyle=p.c;CTX.fillRect(p.x-1,p.y-1,3,3);}
+  CTX.globalAlpha=1;
+  drawMarks(t);
+  drawGrade(t);
+}
+function drawLights(t){
+  // 温暖阳光从窗外洒入
+  const sun={x:0.66*W,y:FLOOR_TOP+10};
+  const gs=CTX.createRadialGradient(sun.x,sun.y,0,sun.x,sun.y,220);
+  gs.addColorStop(0,"rgba(255,240,180,.16)");gs.addColorStop(1,"rgba(255,240,180,0)");
+  CTX.fillStyle=gs;CTX.fillRect(sun.x-220,sun.y-30,440,280);
+  // 斜射阳光光束（从大窗射向地板）
+  CTX.save();
+  CTX.globalCompositeOperation="lighter";
+  const beam=CTX.createLinearGradient(0.58*W,FLOOR_TOP,0.30*W,H);
+  beam.addColorStop(0,"rgba(255,245,200,.10)");beam.addColorStop(1,"rgba(255,245,200,0)");
+  CTX.fillStyle=beam;
+  CTX.beginPath();CTX.moveTo(0.60*W,FLOOR_TOP);CTX.lineTo(0.74*W,FLOOR_TOP);
+  CTX.lineTo(0.30*W,H);CTX.lineTo(0.20*W,H);CTX.closePath();CTX.fill();
+  CTX.restore();
+  // 窗外松树投影（地板窗格光影）
+  CTX.fillStyle="rgba(60,50,30,.05)";
+  CTX.beginPath();CTX.moveTo(0.62*W,FLOOR_TOP+10);CTX.lineTo(0.72*W,FLOOR_TOP+10);
+  CTX.lineTo(0.55*W,H*0.5);CTX.lineTo(0.50*W,H*0.5);CTX.closePath();CTX.fill();
+  const top=CTX.createLinearGradient(0,0,0,80);
+  top.addColorStop(0,"rgba(255,250,230,.20)");top.addColorStop(1,"rgba(255,250,230,0)");
+  CTX.fillStyle=top;CTX.fillRect(0,0,W,80);
+  // 整体提亮（白天）——只用非常淡的光晕
+  const vg=CTX.createRadialGradient(W/2,H/2,H*0.2,W/2,H/2,H*0.95);
+  vg.addColorStop(0,"rgba(255,255,255,0)");vg.addColorStop(1,"rgba(255,255,255,0.02)");
+  CTX.fillStyle=vg;CTX.fillRect(0,0,W,H);
+}
+function drawLift(){
+  CTX.globalCompositeOperation="lighter";
+  CTX.fillStyle="rgba(255,235,180,0.03)";
+  CTX.fillRect(0,0,W,H);
+  CTX.globalCompositeOperation="source-over";
+}
+function drawMarks(t){
+  CTX.textAlign="center";CTX.font="11px 'PingFang SC'";
+  for(const k of ZKEYS){
+    const z=ZONE[k],c=zoneCenter(k),p=project(c.x,c.y);
+    const pul=(Math.sin(t*3+k.length)*0.5+0.5)*0.5+0.3;
+    if(k==="FEED"||k==="TOYS"){
+      CTX.strokeStyle="rgba(255,220,140,"+pul+")";CTX.lineWidth=1.5;
+      CTX.beginPath();CTX.arc(p.x,p.y-4*p.s,10+Math.sin(t*4)*3,0,Math.PI*2);CTX.stroke();}
+    CTX.fillStyle="rgba(255,248,235,.92)";rr(CTX,p.x-42,p.y-70*p.s,84,20,10);CTX.fill();
+    CTX.strokeStyle="rgba(160,120,70,.35)";CTX.stroke();
+    CTX.fillStyle="#5a3a1e";CTX.fillText(z.label,p.x,p.y-70*p.s+14);
+  }
+}
+function drawGrade(t){
+  const grad=CTX.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,"rgba(255,240,200,.05)");grad.addColorStop(.6,"rgba(0,0,0,0)");grad.addColorStop(1,"rgba(200,150,80,.05)");
+  CTX.fillStyle=grad;CTX.fillRect(0,0,W,H);
+  // 窗外飘落的树叶（淡绿色，慢速飘落）
+  const leaves=[
+    {x:0.68*W,y:90+((Math.sin(t*0.8)*40+40)),s:0.9,a:0.25},
+    {x:0.72*W,y:150+((Math.sin(t*0.6+1)*30+30)),s:1.1,a:0.2},
+    {x:0.65*W,y:200+((Math.sin(t*0.7+2)*45+45)),s:0.8,a:0.3},
+    {x:0.70*W,y:260+((Math.sin(t*0.5+3)*35+35)),s:1.0,a:0.22},
+  ];
+  CTX.fillStyle="#5aaa5a";
+  for(const L of leaves){
+    CTX.globalAlpha=L.a*(0.7+Math.sin(t*2)*0.3);
+    CTX.save();
+    CTX.translate(L.x,L.y);
+    CTX.rotate(Math.sin(t*1.5+L.x)*0.6);
+    CTX.beginPath();CTX.ellipse(0,0,3*L.s,1.6*L.s,0,0,Math.PI*2);CTX.fill();
+    CTX.restore();
+  }
+  CTX.globalAlpha=1;
+}
+/* ===================== 弹层（六合一） ===================== */
+const OVERLAYS=["Profile","Show","Survey","Copy","Follow"];
+function closeOverlays(){OVERLAYS.forEach(o=>ui("ov"+o).classList.remove("show"));}
+function openOverlay(name){OVERLAYS.forEach(o=>ui("ov"+o).classList.toggle("show",o===name));ui("feedbox").classList.remove("show");}
+document.querySelectorAll("#dock button").forEach(b=>b.addEventListener("click",()=>{
+  const n=b.dataset.open;if(ui("ov"+n).classList.contains("show"))closeOverlays();else openOverlay(n);}));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeOverlays();});
+function copyText(text,btn){
+  const done=()=>{if(btn){const o=btn.textContent;btn.textContent="✅ 已复制";btn.disabled=true;setTimeout(()=>{btn.textContent=o;btn.disabled=false;},1600);}notif("✅ 已复制到剪贴板","#7bffc0");};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,()=>fb(text,done));}
+  else fb(text,done);
+}
+function fb(text,done){const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");}catch(e){}document.body.removeChild(ta);done();}
+const PROFILE_JSON={档案版本:"V1.0",用途:"仅为流浪奶牛猫小八寻找负责任的家养领养人",立场声明:"不卖惨、不编造悲情故事、不猎奇博流量、不含任何广告或带货",
+  基本信息:{昵称:"小八",品种花色:"中华田园猫·奶牛猫(黑白色)",性别:"公猫",年龄段:"幼猫(约2-4月龄)",体重区间_kg:"0.8-1.5",出身:"流浪幼猫(收养救助)",性格标签:["极度乖巧","懂事","通人性","自律","温顺安静","省心"],训练基础:"无人工训练，天性自学成才",送养范围:"苏州、南通可送养；江浙沪可自提",领养流程:["填写初审问卷","审核通过","沟通/视频看猫","签订领养协议","送养或自提"]},
+  医疗记录:{体内外驱虫:"已使用呋虫胺完成",耳螨:"无",跳蚤:"无",皮肤病:"无",肠胃状态:"稳定，无腹泻、呕吐史",疫苗计划:"适龄后安排三针基础疫苗+狂犬疫苗",绝育计划:"满足绝育条件后立即实施",现患疾病:"无"},
+  饮食规则:{主食:"固定喂养成/幼猫粮，优先幼猫粮",猫粮建议:"粗蛋白不低于38%",每日喂食量:"约50-60克/天(以包装背标按体重对应剂量为准)",喂食餐数:"每日3-4餐，少量多次",可食用辅食:["水煮鸡胸肉(去骨去盐)","无乳糖羊奶粉"],饮水:"常备干净饮用水，每日更换",禁食黑名单:["葱蒜","葡萄","巧克力","重油重盐人类饭菜","其他有毒食物"]},
+  客观小缺点:[{序号:1,表现:"幼年兴奋时会下意识咬人手(玩耍性轻咬)",处理建议:"耐心引导，用玩具转移注意力；禁止暴力打骂"},{序号:2,表现:"乘车易出现应激反应，有跳车倾向",处理建议:"外出必须放入封闭猫包，避免应激与走失"}],
+  饲养要求:["必须纯室内封闭式家养；禁止散养、楼道放养、长期笼养、阳台圈养","猫咪适龄后必须前往正规医院绝育，杜绝无序繁育","猫咪生病愿意承担医疗开销：小病及时护理、大病积极就医；不得因花费、麻烦直接弃养","居住条件：自有住房，或房东明确许可养猫；合租需所有同住人员一致同意；宿舍集体居住禁止领养","领养后同意3个月轻量化线上回访(仅照片/短视频即可，不干涉私人生活)","若后续实在无法继续饲养，必须原路退回给救助人；严禁私自转送、丢弃"],
+  救助人:{称呼:"待填",联系方式:"待填",所在城市:"苏州",送养范围:"苏州、南通可送养；江浙沪自提"}};
+function copyProfile(btn){copyText(JSON.stringify(PROFILE_JSON,null,2),btn);}
+const QUIZ={passLine:70,total:100,parts:[
+  {title:"第一部分 · 基本信息",qs:[
+    {q:"您的年龄是？",type:"single",opts:[{t:"18 周岁以下",p:0},{t:"18–24 周岁",p:3},{t:"25–40 周岁",p:5},{t:"41 周岁以上",p:3}]},
+    {q:"您所在城市 / 区县是？（领养范围筛选，不计分）",type:"text"},
+    {q:"您的居住类型是？",type:"single",core:true,opts:[{t:"自有住房",p:6},{t:"整租，房东已明确许可养猫",p:6},{t:"合租，所有同住人员一致同意养猫",p:5},{t:"宿舍 / 集体宿舍",p:0,veto:true},{t:"其他（请注明，人工复核）",p:0}]},
+    {q:"您家是否有未封纱窗的开放式阳台 / 无封闭的窗台？",type:"single",core:true,opts:[{t:"已封窗 / 无开放式阳台，且承诺保持封闭",p:6},{t:"有开放式阳台但承诺领养前完成封窗",p:4},{t:"无法封窗或不愿封窗",p:0,veto:true}]},
+    {q:"您是否计划将猫咪养在室内？",type:"single",core:true,opts:[{t:"纯室内封闭式家养",p:6},{t:"计划养在室内，偶尔允许到封闭阳台",p:4},{t:"打算散养 / 楼道放养 / 长期笼养 / 阳台圈养",p:0,veto:true}]}]},
+  {title:"第二部分 · 喂养与理念",qs:[
+    {q:"您计划给猫咪喂什么猫粮？",type:"single",opts:[{t:"正规品牌的成/幼猫粮（粗蛋白 ≥ 38%）",p:6},{t:"正规品牌猫粮但未关注蛋白含量",p:4},{t:"随意喂剩饭剩菜 / 未定",p:1}]},
+    {q:"您是否接受以下喂养规则？（可多选）",type:"multi",opts:[{t:"每日分 3–4 餐、按体重控量",p:2},{t:"不投喂禁食黑名单食物（葱蒜、葡萄、巧克力、重油重盐饭菜等）",p:4},{t:"饮用水每日更换",p:2}]},
+    {q:"猫咪生病时，您会怎么做？",type:"single",core:true,opts:[{t:"小病及时护理，大病积极就医，愿意承担医疗开销",p:6},{t:"先观察，严重再就医",p:3},{t:"视经济情况，可能不就医",p:0,veto:true}]}]},
+  {title:"第三部分 · 绝育与长期责任",qs:[
+    {q:"您是否同意猫咪适龄后进行绝育？",type:"single",core:true,opts:[{t:"同意，适龄后立即带其绝育",p:6},{t:"同意，但希望再等等",p:3},{t:"不同意绝育",p:0,veto:true}]},
+    {q:"您能陪伴猫咪多少年？",type:"single",opts:[{t:"10 年以上",p:5},{t:"5–10 年",p:3},{t:"3–5 年",p:1},{t:"不确定 / 短期",p:0}]},
+    {q:"若日后因故无法继续饲养，您会怎么处理？",type:"single",core:true,opts:[{t:"原路退回给救助人",p:6},{t:"先自行找靠谱家庭，再联系救助人",p:3},{t:"放生 / 丢弃 / 私自转送",p:0,veto:true}]}]},
+  {title:"第四部分 · 回访与配合",qs:[
+    {q:"您是否接受领养后 3 个月轻量化线上回访（仅照片/短视频）？",type:"single",opts:[{t:"完全接受",p:6},{t:"可接受，但希望减少频率",p:4},{t:"不接受任何回访",p:0}]},
+    {q:"小八乘车易应激、有跳车倾向，您外出时会如何处理？",type:"single",opts:[{t:"放入封闭猫包",p:4},{t:"用航空箱 / 拎包，但不一定封闭",p:2},{t:"直接抱着或放车座",p:0}]},
+    {q:"小八幼年兴奋时会轻咬人手，您会怎么应对？",type:"single",core:true,opts:[{t:"耐心引导，用玩具转移注意力，绝不暴力打骂",p:4},{t:"大声呵斥或轻拍一下",p:1},{t:"用力打骂",p:0,veto:true}]}]},
+  {title:"第五部分 · 备注",qs:[{q:"请简单介绍一下您的家庭 / 饲养环境，或想对小八说的话（不计分，供人工复核）",type:"text"}]}]};
+let qn=0;
+function buildSurvey(){
+  const box=ui("surveyForm");box.innerHTML="";
+  QUIZ.parts.forEach(part=>{
+    const sec=document.createElement("div");sec.style.marginBottom="18px";
+    const h=document.createElement("h2");h.style.fontSize="15px";h.style.marginBottom="8px";h.style.color="#9bd6ff";h.textContent=part.title;sec.appendChild(h);
+    part.qs.forEach(q=>{
+      const name="q"+(qn++);
+      const qb=document.createElement("div");qb.className="qblock";
+      const qt=document.createElement("div");qt.className="qt";qt.textContent=q.q;
+      if(q.core){const c=document.createElement("span");c.className="core";c.textContent="一票否决项";qt.appendChild(c);}
+      qb.appendChild(qt);
+      if(q.type==="text"){
+        const ta=document.createElement("textarea");ta.className="qtext";ta.placeholder="在此填写…";qb.appendChild(ta);
+      }else{q.opts.forEach(opt=>{
+        const lab=document.createElement("label");lab.className="opt"+(opt.veto?" veto":"");
+        const inp=document.createElement("input");inp.type=q.type==="multi"?"checkbox":"radio";inp.name=name;
+        inp.dataset.p=opt.p;if(opt.veto)inp.dataset.veto="1";
+        const sp=document.createElement("span");sp.textContent=opt.t;
+        const pts=document.createElement("span");pts.className="pts";pts.textContent="+ "+opt.p+(opt.veto?" ⛔":"");
+        lab.appendChild(inp);lab.appendChild(sp);lab.appendChild(pts);
+        qb.appendChild(lab);});}
+      sec.appendChild(qb);});
+    box.appendChild(sec);});
+}
+function scoreQuiz(){let total=0,veto=[];document.querySelectorAll("#surveyForm .qblock").forEach(qb=>{qb.querySelectorAll("input:checked").forEach(inp=>{if(inp.type==="radio"&&inp.dataset.veto==="1")veto.push(qb.querySelector(".qt").childNodes[0].textContent);total+=parseInt(inp.dataset.p||0,10);});});return{total,veto};}
+function contactCard(){
+  return '<div class="card contact"><h2>📞 救助人联系方式</h2>'
+  +'<p style="font-size:13px;color:#8fa0cc;">得分 ≥ '+CONTACT_SHOW+' 分，已为你解锁</p>'
+  +'<p class="phone">'+CONTACT_PHONE+'</p>'
+  +'<a href="tel:'+CONTACT_PHONE+'" class="btn green" style="text-decoration:none;display:inline-block;margin:0 6px 6px 0;">📞 直接拨打</a>'
+  +'<button class="btn primary" onclick="copyText(\''+CONTACT_PHONE+'\',this)">📋 复制号码</button>'
+  +'<p style="font-size:12px;color:#8fa0cc;margin-top:8px;">请备注「领养小八」，按领养要求沟通 · 苏州、南通可送养，江浙沪自提</p></div>';
+}
+function submitQuiz(){
+  const s=scoreQuiz(),res=ui("result");res.classList.add("show");
+  const con=s.total>=CONTACT_SHOW?"<br>"+contactCard():"";
+  if(s.veto.length){res.className="";res.classList.add("fail");
+    res.innerHTML="<b>✖ 未通过初审（触发核心一票否决项）</b><br>触发项：<b>"+s.veto.join("、")+"</b><br>得分 "+s.total+" / 100。<br>为小八负责，本次不进入后续流程，也不提供联系方式，感谢理解。";}
+  else if(s.total>=QUIZ.passLine){res.className="";res.classList.add("pass");
+    res.innerHTML="<b>✔ 通过初审！得分 "+s.total+" / 100（≥"+QUIZ.passLine+"）</b><br>未触发任何一票否决项，可进入沟通 / 视频看猫环节。"+con;}
+  else if(s.total>=CONTACT_SHOW){res.className="";res.classList.add("review");
+    res.innerHTML="<b>△ 得分 "+s.total+" / 100，已达标获取联系方式</b><br>未达正式通过线（"+QUIZ.passLine+"分），救助人会人工复核后再约看猫。"+con;}
+  else{res.className="";res.classList.add("review");
+    res.innerHTML="<b>△ 得分 "+s.total+" / 100</b><br>需 ≥ "+CONTACT_SHOW+" 分才可获取救助人联系方式。<br>欢迎补全信息、重新作答后再试。";}
+  res.scrollIntoView({behavior:"smooth",block:"center"});
+  notif("📊 已提交，查看你的得分","#7bc0ff",s.total>=CONTACT_SHOW&&s.veto.length===0?"并解锁了联系方式":"可继续完善问卷");
+}
+function resetQuiz(){document.querySelectorAll("#surveyForm input,#surveyForm textarea").forEach(el=>{if(el.tagName==="TEXTAREA")el.value="";else el.checked=false;});ui("result").classList.remove("show");}
+const QNUM={};let qi2=0;
+function qtag(q){if(!QNUM[q.q])QNUM[q.q]=++qi2;return QNUM[q.q];}
+function surveyImport(){
+  const L=["小八 · 领养初审问卷（问卷星文本导入版）","","（粘贴到问卷星：新建问卷→文本导入，再按题型核对）",""];
+  QUIZ.parts.forEach(part=>{L.push(part.title,"");
+    part.qs.forEach(q=>{const type=q.type==="multi"?"【多选·必答】":(q.type==="text"?"【填空·选答】":"【单选·必答】");
+      L.push("Q"+qtag(q)+"."+type+(q.core?" ⛔核心项 ":"")+q.q,"");
+      if(q.type!=="text")q.opts.forEach((o,i)=>{L.push("  "+String.fromCharCode(65+i)+". "+o.t+"（"+o.p+" 分"+(o.veto?"，一票否决":"")+"）");});
+      L.push("");});});
+  L.push("【打分与淘汰规则】","","· 满分 100 分","· 通过初审 =（未触发任何核心一票否决项）AND（总分 ≥ 70）","",
+    "· 达到 60 分可解锁救助人联系方式（13812630719）","",
+    "· 核心一票否决项（出现任一即淘汰，且不提供联系方式）：","　宿舍/集体宿舍集体居住","　无法或不承诺封窗","　计划散养/楼道放养/长期笼养/阳台圈养","　生病可能不就医/因花费、麻烦弃养","　不同意绝育","　打算放生、丢弃或私自转送","　暴力打骂猫咪","",
+    "· 无红线但总分 < 70 → 人工复核；无红线且总分 ≥ 70 → 通过初审");
+  return L.join("\n");
+}
+function copyImport(btn){copyText(surveyImport(),btn);}
+const COPY=[
+  {name:"① 微信朋友圈",text:"苏州 / 南通领养｜一只自带省心天赋的奶牛小猫在等家 🐾\n\n它叫小八，2-4 个月大公奶牛猫，捡到时才两个月，如今已经完成了体内外驱虫，健康白白净净。\n\n小八最打动我的不是颜值，是它的懂事——到家第二天，它自己找到猫砂盆定点上厕所，上完还会走过来「喵」一声提醒我清理。从没有人教过它这些。\n\n它安静、温柔、省心。白天自己玩玩具、不拆家、不乱叫；晚上乖乖在阳台睡觉，清晨醒来也不吵我，只会轻轻趴到床边安静陪着。\n\n说实话，它是我见过最通人性的小猫咪。\n\n领养要求（可先看，符合再联系我）：\n✅ 纯室内封闭家养，已封窗\n✅ 愿意适龄后带它绝育、生病就医\n✅ 自有住房 / 房东许可 / 同住人都同意\n✅ 接受 3 个月照片视频回访\n✅ 如无法继续饲养，原路退回给我，不转送不丢弃\n\n苏州、南通可送上门，江浙沪可自提。有意私我（联系方式待填），先聊清楚再见面看猫。"},
+  {name:"② 小红书",text:"标题：捡到一只自带「省心天赋」的奶牛小猫，求靠谱家长 🐱\n\n苏州姐妹看过来！在给救助的奶牛小猫找家～\n\n🐈 小八｜公 · 约2-4月龄 · 已驱虫（呋虫胺）· 健康无耳螨无跳蚤\n\n它真的过分懂事了：\n· 到家第二天自己定点如厕，还会喵喵提醒我清理（没人教）\n· 温柔安静，不拆家不乱叫，情绪超稳定\n· 白天自己玩，晚上阳台睡觉，清晨不吵醒主人\n· 驱虫全程乖乖配合，几乎没有挣扎\n\n小缺点也如实说：幼年兴奋会轻咬手（用玩具引导就好）、坐车易应激（外出封闭猫包）。\n\n领养门槛不低，但为了它值得：\n① 纯室内封闭家养，已封窗，不散养\n② 适龄绝育，生病不弃养\n③ 自住房/房东许可/合租同住人全同意\n④ 接受3个月照片回访\n⑤ 不能养了必须退回，严禁转送丢弃\n\n苏州、南通可送上门，江浙沪自提。符合要求想接它回家的姐妹，评论区滴滴或私我（联系方式待填）～\n\n#苏州领养 #猫咪领养 #奶牛猫 #流浪猫救助 #南通领养"},
+  {name:"③ 豆瓣（宠物收养 / 苏州同城）",text:"【苏州·南通送养】乖巧通人性的奶牛幼猫小八找家\n\n救助一只流浪奶牛猫小八，约2-4月龄公猫，已用呋虫胺完成体内外驱虫，无耳螨、跳蚤、皮肤病，肠胃稳定，健康活泼。\n\n它的特别之处：\n1. 到家第二天自主定点如厕，自带掩埋排泄物本能，上完厕所还会主动喵喵提醒主人清理。\n2. 安静温柔，不拆家、不乱叫，白天自己玩玩具独处，情绪稳定。\n3. 夜间独自在阳台睡觉，清晨醒来不会打扰熟睡的主人，安静趴在床边行李箱陪睡，极度体谅人。\n4. 体内外驱虫全程极度配合，毫无挣扎。\n\n如实告知缺点：\n- 幼年兴奋时会下意识轻咬人手，需耐心引导，禁止打骂。\n- 乘车易应激、有跳车倾向，外出必须封闭猫包。\n\n领养要求（请逐条确认符合再联系）：\n1. 纯室内封闭式家养，禁散养/楼道放养/长期笼养/阳台圈养；\n2. 适龄后必须绝育，杜绝无序繁育；\n3. 生病愿意承担医疗开销，不因花费或麻烦弃养；\n4. 自有住房或房东许可；合租需同住人一致同意；宿舍集体居住婉拒；\n5. 接受3个月轻量化线上回访（照片/短视频即可）；\n6. 无法继续饲养须原路退回，严禁转送、丢弃。\n\n苏州、南通可送养，江浙沪自提。请联系（联系方式待填），先填初审问卷再约看猫。领养代替购买，谢谢大家。"},
+  {name:"④ 闲鱼",text:"标题：苏州南通送养 · 懂事省心的奶牛幼猫（已驱虫）\n\n闲鱼上的送养，不收任何费用，只为给这只小奶牛找个靠谱的家。\n\n猫咪基本情况：\n- 奶牛猫 / 公 / 约2-4月龄\n- 已用呋虫胺做体内外驱虫，无耳螨、跳蚤、皮肤病\n- 未绝育未打疫苗（适龄后我会带它完成，领养人需继续配合）\n\n为什么说它省心：\n到家第二天就自主定点上厕所，还主动提醒主人清理；不拆家不乱叫，安静独处；晚上阳台睡觉，清晨不吵醒主人；驱虫配合度高。\n\n领养门槛（务必看清楚，符合再拍/联系）：\n✅ 纯室内封闭家养、已封窗\n✅ 适龄绝育、生病就医、不弃养\n✅ 自住房/房东许可/同住人全同意\n✅ 接受3个月照片回访\n✅ 不能养必须退回，不转送不丢弃\n\n苏州、南通可送上门，江浙沪自提。评论区或私信联系（联系方式待填）。\n\n提示：发布时选择「送养」标签，标题避免含疑似买卖字样，避免触发平台风控。"},
+  {name:"⑤ 苏州本地宠物群 / 业主群",text:"各位邻居好，求助领养一只特别乖巧的奶牛小猫 🐈\n\n小八，约2-4月龄公猫，已驱虫、体检健康。它真的非常懂事——没人教，到家第二天就自己会定点上厕所，上完还会喵喵提醒我清理；不拆家、不乱叫，安静独处，晚上阳台睡，早上不吵醒主人。\n\n诚寻一位能给它安稳一生的家长：\n- 纯室内封闭家养（封窗、不散养）\n- 适龄绝育、生病就医、不弃养\n- 自住房/房东许可/合租全屋同意\n- 接受3个月照片视频回访\n- 日后如不能养，原路退回给我\n\n苏州、南通可送上门，江浙沪自提。有意向的邻居请联系我（联系方式待填），先聊聊再约看猫。感谢！"}
+];
+function buildCopy(){
+  const box=ui("copyList");
+  COPY.forEach(c=>{
+    const card=document.createElement("div");card.className="copycard";
+    const ch=document.createElement("div");ch.className="ch";
+    const h=document.createElement("h3");h.textContent=c.name;
+    const b=document.createElement("button");b.className="btn";b.textContent="📋 复制";
+    b.addEventListener("click",()=>copyText(c.text,b));
+    ch.appendChild(h);ch.appendChild(b);
+    const pre=document.createElement("pre");pre.textContent=c.text;
+    card.appendChild(ch);card.appendChild(pre);box.appendChild(card);});
+}
+function initFollow(){
+  document.querySelectorAll("#ovFollow textarea").forEach(ta=>{const k=ta.dataset.k;const v=localStorage.getItem("xbF_"+k);if(v!=null)ta.value=v;
+    ta.addEventListener("input",()=>{try{localStorage.setItem("xbF_"+k,ta.value);}catch(e){}});});
+  document.querySelectorAll("#ovFollow input[type=checkbox]").forEach(cb=>{const k=cb.dataset.k;
+    if(localStorage.getItem("xbF_"+k)==="1")cb.checked=true;
+    cb.addEventListener("change",()=>{try{localStorage.setItem("xbF_"+k,cb.checked?"1":"0");}catch(e){}});});
+}
+function clearFollow(){
+  if(!confirm("确认清空本页所有回访记录？（仅清本地）"))return;
+  document.querySelectorAll("#ovFollow textarea,#ovFollow input[type=checkbox]").forEach(el=>{
+    if(el.dataset.k)localStorage.removeItem("xbF_"+el.dataset.k);
+    if(el.tagName==="TEXTAREA")el.value="";else el.checked=false;});
+  notif("🗑 回访记录已清空","#ff9f8a");
+}
+/* 视频上传 */
+const VIDEO_SRC="video.mp4";
+function setupVideo(){
+  const v=ui("catVideo"),ph=ui("videoPh"),btn=ui("videoBtn"),clr=ui("videoClr");
+  if(VIDEO_SRC){v.src=VIDEO_SRC;v.style.display="block";ph.style.display="none";}
+  btn.addEventListener("click",()=>{const inp=document.createElement("input");inp.type="file";inp.accept="video/mp4,video/webm,video/quicktime,video/*";
+    inp.onchange=()=>{const f=inp.files[0];if(!f)return;const url=URL.createObjectURL(f);v.src=url;v.style.display="block";ph.style.display="none";v.play().catch(()=>{});notif("🎬 已加载小八的视频","#7bffc0");};
+    inp.click();});
+  clr.addEventListener("click",()=>{v.pause();v.removeAttribute("src");v.load();v.style.display="none";ph.style.display="flex";});
+}
+/* ===================== 弹层 HTML ===================== */
+function ovlHTML(id,title,body){
+  const d=document.createElement("div");d.className="ovl";d.id="ov"+id;
+  d.innerHTML='<div class="ovl-head"><h2>'+title+'</h2><button class="ovl-close">✕</button></div><div class="ovl-body"><div class="content">'+body+'</div></div>';
+  d.querySelector(".ovl-close").addEventListener("click",closeOverlays);
+  document.body.appendChild(d);
+}
+const section=`
+<div class="card"><h2>基本信息</h2><table class="tbl">
+<tr><th>昵称</th><td>小八</td></tr><tr><th>品种花色</th><td>中华田园猫 · 奶牛猫（黑白色）</td></tr>
+<tr><th>性别 / 月龄</th><td>公猫 · 约 2–4 月龄</td></tr><tr><th>体重</th><td>约 0.8–1.5 kg</td></tr>
+<tr><th>出身</th><td>流浪幼猫（收养救助）</td></tr><tr><th>训练基础</th><td>无人工训练，天性自学成才</td></tr>
+<tr><th>送养范围</th><td>苏州、南通可送养；江浙沪可自提</td></tr>
+<tr><th>性格标签</th><td><span class="tag">极度乖巧</span><span class="tag">懂事</span><span class="tag">通人性</span><span class="tag">自律</span><span class="tag">温顺安静</span><span class="tag">省心</span></td></tr></table></div>
+<div class="card"><h2>医疗记录</h2><table class="tbl">
+<tr><th>体内外驱虫</th><td>已使用「呋虫胺」完成体内外驱虫</td></tr>
+<tr><th>耳螨 / 跳蚤 / 皮肤病</th><td>无</td></tr><tr><th>肠胃状态</th><td>稳定，无腹泻、呕吐史</td></tr>
+<tr><th>疫苗计划</th><td>适龄后安排：三针基础疫苗 + 狂犬疫苗</td></tr><tr><th>绝育计划</th><td>满足绝育条件后立即实施</td></tr></table>
+<div class="good">健康状态良好，已完成体内外驱虫，可放心体检。</div></div>
+<div class="card"><h2>饮食规则</h2><table class="tbl">
+<tr><th>主食</th><td>固定喂养成/幼猫粮（优先幼猫粮，粗蛋白 ≥ 38%）</td></tr>
+<tr><th>每日喂食量</th><td>约 50–60 g/天，分 3–4 餐（以包装背标按体重对应剂量为准）</td></tr>
+<tr><th>安全辅食</th><td>水煮鸡胸肉（去骨去盐）、无乳糖羊奶粉</td></tr><tr><th>饮水</th><td>常备干净饮用水，每日更换</td></tr></table>
+<div class="warn">⚠️ 禁食黑名单：葱蒜、葡萄、巧克力、重油重盐人类饭菜等有毒食物，严禁投喂。</div></div>
+<div class="card"><h2>客观小缺点（领养须知）</h2><table class="tbl">
+<tr><th>① 咬手</th><td>幼年兴奋时会下意识轻咬人手，需耐心引导、用玩具转移注意力，<b>禁止暴力打骂</b>。</td></tr>
+<tr><th>② 乘车应激</th><td>乘车易出现应激、有跳车倾向，外出必须放入<b>封闭猫包</b>。</td></tr></table></div>
+<div class="card"><h2>饲养要求（领养必读）</h2><ol class="list">
+<li>必须纯室内封闭式家养，禁止散养、楼道放养、长期笼养、阳台圈养。</li>
+<li>适龄后必须前往正规医院绝育，杜绝无序繁育。</li>
+<li>生病愿意承担医疗开销：小病及时护理、大病积极就医，不得因花费、麻烦直接弃养。</li>
+<li>自有住房，或房东明确许可养猫；合租需所有同住人员一致同意；宿舍集体居住禁止领养。</li>
+<li>领养后同意 3 个月轻量化线上回访（仅照片/短视频即可，不干涉私人生活）。</li>
+<li>若日后无法继续饲养，必须原路退回给救助人，严禁私自转送、丢弃。</li></ol></div>
+<div class="card"><h2>JSON 结构化数据</h2>
+<p style="font-size:13px;color:#8fa0cc;margin-bottom:10px;">点击复制，可直接用于系统导入 / 备份。</p>
+<button class="btn primary" onclick="copyProfile(this)">📦 复制 JSON 档案</button></div>`;
+ovlHTML("Profile","📋 小八电子档案",'<h1>小八结构化电子档案</h1><p class="sub">Markdown / JSON 双格式 · 可一键复制 JSON 数据</p>'+section);
+const showHTML=`
+<div class="card" style="text-align:center;">
+<h1 style="font-size:24px;border:none;padding:0;margin-bottom:6px;">🐱 小八 · 领养守护官</h1>
+<p class="sub" style="margin-bottom:4px;">一只极度乖巧、通人性的奶牛流浪幼猫，正在等待一个安稳的家</p>
+<div class="photo"><div class="slot"><img src="" alt="照片1"><span>照片①</span></div><div class="slot"><img src="" alt="照片2"><span>照片②</span></div><div class="slot"><img src="" alt="照片3"><span>照片③</span></div></div>
+<p style="color:#8fa0cc;font-size:11px;margin-top:6px;">把照片放进同级文件夹后，修改 JS 中 SHOW_PHOTOS 数组即可（或填网络图床地址）</p></div>
+<div class="card"><h2>🎬 小八的日常视频</h2>
+<div class="videobox">
+<video id="catVideo" controls playsinline style="display:none;"></video>
+<div class="vidph" id="videoPh">📼 选择一个小八的视频文件（mp4 / webm）<br><span style="font-size:11px;color:#6f86c8;">仅在本地播放，不上传任何服务器</span></div>
+<div style="margin-top:10px;display:flex;gap:8px;justify-content:center;">
+<button class="btn primary" id="videoBtn">📁 选择视频文件</button>
+<button class="btn danger" id="videoClr">🗑 移除视频</button></div>
+</div></div>
+<div class="card"><h2>关于小八</h2><p style="font-size:14px;line-height:1.9;">小八是一只极度乖巧、懂事、非常通人性的奶牛流浪幼猫。它天性温顺省心，素养远超普通小猫，完全没有经过任何人工训练。日常不拆家、不乱叫；多数时间自己玩玩具、安静独处；夜间独自在阳台睡觉，清晨醒来也不会打扰熟睡的主人，只会轻轻走到床边安静陪伴。</p>
+<div style="margin-top:8px;"><span class="tag">极乖巧</span><span class="tag">通人性</span><span class="tag">自律</span><span class="tag">安静温柔</span><span class="tag">不拆家</span><span class="tag">体谅主人</span></div></div>`
++section+
+`<div class="card"><h2>领养流程</h2><table class="tbl">
+<tr><th>① 填问卷</th><td>填写领养初审问卷，自动筛除不合格意向</td></tr>
+<tr><th>② 查看得分</th><td>作答完毕提交后可见得分；达标（≥60分）解锁救助人联系方式</td></tr>
+<tr><th>③ 初审通过</th><td>核对饲养要求，明确承诺绝育、就医、封窗等</td></tr>
+<tr><th>④ 沟通看猫</th><td>线上视频 / 同城上门看猫，双方确认</td></tr>
+<tr><th>⑤ 签协议送养</th><td>签订领养协议（含退回条款）· 苏州、南通送养 / 江浙沪自提</td></tr></table></div>
+<div class="card"><h2>申请领养</h2><p style="font-size:13px;color:#8fa0cc;margin-bottom:10px;">完成问卷且得分 ≥ 60 分，即可获取救助人联系方式（13812630719）。</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn primary" onclick="openOverlay('Survey')">📝 去填写初审问卷</button>
+<button class="btn" onclick="openOverlay('Profile')">📋 查看电子档案</button></div>
+<div class="foot" style="margin-top:12px;">※ 本页无广告、无外链、无弹窗，联系方式只对通过问卷达标的意向领养人开放。</div></div>`;
+ovlHTML("Show","🖼 领养展示页",showHTML);
+ovlHTML("Survey","📝 领养初审问卷",'<h1>领养初审问卷</h1><p class="sub">作答完毕后点「提交判定」即可看到你的得分；达标（≥ 60 分）自动解锁救助人联系方式。核心安全项一票否决。</p><div style="margin-bottom:14px;"><button class="btn primary" onclick="copyImport(this)">📋 复制问卷星导入文本</button> <button class="btn" onclick="resetQuiz()" style="margin-left:8px;">🔄 重新填写</button></div><div id="surveyForm"></div><div style="margin:12px 0;"><button class="btn primary" onclick="submitQuiz()" style="font-size:15px;padding:12px 28px;">✅ 提交判定 · 查看得分</button></div><div id="result"></div>');
+ovlHTML("Copy","✍️ 多平台发布文案",'<h1>多平台发布文案</h1><p class="sub">复制后直接发布即可 · 发布前记得把「联系方式待填」替换为真实信息。</p><div id="copyList"></div>');
+let followHTML=`<h1>领养回访记录表</h1><p class="sub">领养后 3 个月内轻量化线上回访（仅照片/短视频）· 填写内容自动保存在本地浏览器，无需联网。</p>
+<div class="card"><h2>领养人信息</h2><table class="tbl">
+<tr><th>领养人</th><td><textarea data-k="name" placeholder="姓名/昵称"></textarea></td></tr>
+<tr><th>联系方式</th><td><textarea data-k="contact" placeholder="电话 / 微信"></textarea></td></tr>
+<tr><th>所在城市</th><td><textarea data-k="city" placeholder="城市"></textarea></td></tr>
+<tr><th>领养日期</th><td><textarea data-k="date" placeholder="领养日期"></textarea></td></tr>
+<tr><th>住址类型</th><td><textarea data-k="house" placeholder="自有住房 / 整租(房东许可) / 合租(同住人同意)"></textarea></td></tr>
+<tr><th>是否已封窗</th><td><textarea data-k="window" placeholder="是 / 否"></textarea></td></tr></table></div>
+<div class="card"><h2>回访时间表</h2><table class="tbl"><tr><th>序号</th><th>时间节点</th><th>计划日期</th><th>完成情况</th></tr>
+<tr><td>1</td><td>领养后第 2 周</td><td><textarea data-k="s1"></textarea></td><td><label class="cb"><input type="checkbox" data-k="c1"> 已完成</label></td></tr>
+<tr><td>2</td><td>领养后第 1 个月</td><td><textarea data-k="s2"></textarea></td><td><label class="cb"><input type="checkbox" data-k="c2"> 已完成</label></td></tr>
+<tr><td>3</td><td>领养后第 2 个月</td><td><textarea data-k="s3"></textarea></td><td><label class="cb"><input type="checkbox" data-k="c3"> 已完成</label></td></tr>
+<tr><td>4</td><td>领养后第 3 个月</td><td><textarea data-k="s4"></textarea></td><td><label class="cb"><input type="checkbox" data-k="c4"> 已完成</label></td></tr></table></div>`;
+for(let i=1;i<=4;i++){
+  followHTML+='<div class="card"><h2>回访记录 · 第 '+i+' 次（'+["第 2 周","第 1 个月","第 2 个月","第 3 个月"][i-1]+'）</h2><table class="tbl">'
+  +'<tr><th>饮食与食欲</th><td><textarea data-k="f'+i+'a"></textarea></td></tr>'
+  +'<tr><th>排泄 / 定点</th><td><textarea data-k="f'+i+'b"></textarea></td></tr>'
+  +'<tr><th>精神与活动</th><td><textarea data-k="f'+i+'c"></textarea></td></tr>'
+  +'<tr><th>异常症状</th><td><textarea data-k="f'+i+'d"></textarea></td></tr>'
+  +'<tr><th>疫苗 / 绝育进展</th><td><textarea data-k="f'+i+'e"></textarea></td></tr>'
+  +'<tr><th>领养人反馈 / 疑问</th><td><textarea data-k="f'+i+'f"></textarea></td></tr></table></div>';
+}
+followHTML+=`<div class="card"><h2>异常情况处理流程</h2><table class="tbl">
+<tr><th>回访无应答（连续 2 次）</th><td>电话 / 微信 / 短信多通道联系，必要时联系紧急联系人</td></tr>
+<tr><th>疑似散养 / 笼养 / 未封窗</th><td>友善提醒并强调饲养要求，限期整改并复查</td></tr>
+<tr><th>弃养 / 转送苗头</th><td>重申「必须原路退回给救助人」，及时介入协调</td></tr>
+<tr><th>生病未就医</th><td>引导及时就医，必要时提供宠物医院信息</td></tr>
+<tr><th>疫苗 / 绝育未按约完成</th><td>温和提醒，确认原因并约定时间</td></tr>
+<tr><th>确认无法继续饲养</th><td>按协议原路退回；严禁自行转送、丢弃</td></tr></table></div>
+<div class="card"><h2>结束回访总结</h2><table class="tbl">
+<tr><th>是否顺利度过 3 个月</th><td><textarea data-k="end1" placeholder="是 / 否"></textarea></td></tr>
+<tr><th>小八最终去向</th><td><textarea data-k="end2" placeholder="稳定留在领养家庭 / 退回救助人 / 其他"></textarea></td></tr>
+<tr><th>领养人配合度</th><td><textarea data-k="end3" placeholder="高 / 中 / 低"></textarea></td></tr>
+<tr><th>备注 / 补充</th><td><textarea data-k="end4"></textarea></td></tr></table></div>
+<div style="margin-bottom:10px;"><button class="btn danger" onclick="clearFollow()">🗑 清空回访记录（本地）</button></div>
+<div class="foot">本页内容仅保存在你的浏览器本地（localStorage），不上传任何服务器。</div>`;
+ovlHTML("Follow","🔍 领养回访记录表",followHTML);
+/* 展示照片（可改） */
+const SHOW_PHOTOS=[
+  "photo/acc332f7451beb3847a2db7b929a67c.jpg",
+  "photo/c4b9f398e9b0aa63092a36f71d7ed30.jpg",
+  "photo/e2fbaa2a3a8cd9be54e617d51359d5b.jpg"
+];
+(function(){const imgs=document.querySelectorAll("#ovShow .slot img");imgs.forEach((img,i)=>{if(SHOW_PHOTOS[i])img.src=SHOW_PHOTOS[i];});})();
+/* ===================== 启动 ===================== */
+loadGame();
+fit();
+buildSurvey();
+buildCopy();
+initFollow();
+setupVideo();
+/* —— 小八口吻流程引导 —— */
+const GUIDE=[
+  {name:"👋 欢迎来到小八之家",t:"喵～你好呀！我是小八，一只黑白奶牛小猫。这里是森林里的木屋，以后你每天都能来看我。"},
+  {name:"🧭 想做什么点哪里",t:"地上摆着喂食台、玩具、飘窗软座、猫爬架……还有我的小床和电视。点击它们，我就会溜达过去陪你互动。"},
+  {name:"💗 好感怎么提升",t:"喂我吃饭、陪我玩、让我睡觉、给我握手、贴贴撒娇……做这些都会增加好感度，等级越高解锁越多互动！"},
+  {name:"📈 升级与奖励",t:"好感满了就升级：Lv2 解锁「握手」，Lv3 解锁「贴贴」，Lv4 解锁全套顺从动作。脏了记得帮我清理猫砂哦。"},
+  {name:"📋 资料与领养",t:"右侧的「档案/展示/问卷/文案/回访」能看到我的照片视频、领养问卷和文案。填完问卷达标，就能拿到救助人联系方式。"},
+  {name:"🚀 开始吧！",t:"现在，试着点一下我，或者点地上的喂食台喂我顿好吃的吧～我们一起把好感刷满！"}
+];
+let guideStep=0,guideTimer=null;
+function typeGuide(){
+  const line=ui("guideLine"),cur=document.createElement("span");cur.className="cur";
+  const full=GUIDE[guideStep].t,btn=ui("guideBtn");
+  btn.style.display="none";
+  line.innerHTML="";
+  let i=0;
+  function tick(){
+    if(i<=full.length){
+      line.innerHTML=full.slice(0,i);
+      line.appendChild(cur);
+      i++;
+      guideTimer=setTimeout(tick,26);
+    }else{btn.style.display="";btn.textContent=guideStep===GUIDE.length-1?"进入木屋 🏠":"下一条 →";}
+  }
+  tick();
+}
+function guideNext(){
+  if(guideTimer){clearTimeout(guideTimer);guideTimer=null;}
+  if(guideStep<GUIDE.length-1){guideStep++;ui("guide").querySelector(".g-name").innerHTML="🐱 "+GUIDE[guideStep].name;typeGuide();}
+  else{dismissGuide();}
+}
+function dismissGuide(){
+  const g=ui("guide");g.classList.add("hide");
+  setTimeout(()=>{g.style.display="none";},500);
+  st.guideDone=true;
+}
+setTimeout(()=>notif("🐾 欢迎来到小八的森林木屋","#7bffc0","点击屏幕任意处开始小指南"),800);
+setTimeout(()=>{
+  const n=ui("intro");n.classList.add("hide");
+  setTimeout(()=>n.style.display="none",1300);
+  ui("guide").classList.remove("hide");
+  ui("guide").querySelector(".g-name").innerHTML="🐱 "+GUIDE[0].name;
+  typeGuide();
+},2600);
+function beginGuide(){if(!st.guideDone){const n=ui("intro");if(n&&n.style.display!=="none"){n.classList.add("hide");setTimeout(()=>n.style.display="none",1300);}}
+  const g=ui("guide");if(st.guideDone||g.style.display==="none")return;
+  ui("guide").classList.remove("hide");typeGuide();}
+let lastT=0;
+requestAnimationFrame(function loop(now){
+  const dt=Math.min(0.05,(now-lastT||now)/1000);lastT=now;
+  update(dt,now/1000);
+  draw();
+  requestAnimationFrame(loop);
+});
+</script>
+</body>
+</html>
