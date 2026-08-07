@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>小八 · 领养守护官（电影版）</title>
+<title>小八 · 领养守护官</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;background:#03040a;color:#eaf2ff;
@@ -178,7 +178,7 @@ html,body{height:100%;overflow:hidden;background:#03040a;color:#eaf2ff;
 <div id="wrap">
   <header id="appbar">
     <div class="brand"><span class="logo">🐾</span>
-      <span class="t">小八 · 领养守护官<small>GTA CITY EDITION</small></span></div>
+      <span class="t">小八 · 领养守护官<small>森林木屋版</small></span></div>
     <div id="hud">
       <div id="affinity">
         <div class="row"><span class="lbl">好感</span><span class="val" id="affVal">0/100</span><span class="lv" id="affLv">Lv1 初识友好</span></div>
@@ -1369,8 +1369,9 @@ function toggleKeyMode(){
   if(!dp)return;
   dp.querySelectorAll("button").forEach(btn=>{
     const k=btn.getAttribute("data-k");
-    function press(e){e.preventDefault();st.keys=[...new Set([...st.keys,k])];st.keyMode=true;if(st.mode)stopAction();}
-    function release(e){e.preventDefault();st.keys=st.keys.filter(x=>x!==k);}
+    let relT=null;
+    function press(e){e.preventDefault();e.stopPropagation();if(relT){clearTimeout(relT);relT=null;}st.keys=[...new Set([...st.keys,k])];st.keyMode=true;if(st.mode)stopAction();}
+    function release(e){e.preventDefault();e.stopPropagation();if(relT)clearTimeout(relT);relT=setTimeout(()=>{st.keys=st.keys.filter(x=>x!==k);},120);}
     btn.addEventListener("pointerdown",press);
     btn.addEventListener("pointerup",release);
     btn.addEventListener("pointerleave",release);
@@ -1478,7 +1479,7 @@ function update(dt,t){
   if(!st.poop){st.toiletTimer+=dt;if(st.toiletTimer>=40){st.toiletTimer=0;autoToilet();}}
   if(st.poop)addAff(-0.05*dt);
   st.autoT-=dt;
-  if(st.autoT<=0){st.autoT=rand(20,36);if(!st.mode&&!st.walking&&!st.poop)autoIdle();}
+  if(st.autoT<=0){st.autoT=rand(20,36);if(!st.mode&&!st.walking&&!st.poop&&!st.keys.length)autoIdle();}
   const lv=lvOf(st.score);
   if(lv>st.lv){unlock(lv);}st.lv=lv;
   if(st.bubble){st.bubbleT+=dt;if(st.bubbleT>2.2)st.bubble=null;}

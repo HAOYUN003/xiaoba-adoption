@@ -60,4 +60,6 @@ Write-Host "  URL: https://haoyun003.github.io/xiaoba-adoption/" -ForegroundColo
 Write-Host "  Note: wait 1-2 min for GitHub Pages build" -ForegroundColor DarkGray
 Write-Host "==========================================" -ForegroundColor Green
 Write-Host ""
+Start-Process "https://haoyun003.github.io/xiaoba-adoption/"
+Write-Host "  Opening browser..." -ForegroundColor Cyan
 Read-Host "Press Enter to close"
