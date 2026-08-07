@@ -24,7 +24,9 @@ Write-Host "      index.html copied" -ForegroundColor Green
 Write-Host "[2/4] Copy photos ..." -ForegroundColor Yellow
 if (Test-Path "$SRC_DIR\photo") {
   if (-not (Test-Path "$DEPLOY\photo")) { New-Item -ItemType Directory -Path "$DEPLOY\photo" | Out-Null }
-  Copy-Item "$SRC_DIR\photo\*" "$DEPLOY\photo\" -Force -ErrorAction SilentlyContinue
+  Copy-Item "$SRC_DIR\photo\*.jpg" "$DEPLOY\photo\" -Force -ErrorAction SilentlyContinue
+  Copy-Item "$SRC_DIR\photo\*.jpeg" "$DEPLOY\photo\" -Force -ErrorAction SilentlyContinue
+  Copy-Item "$SRC_DIR\photo\*.png" "$DEPLOY\photo\" -Force -ErrorAction SilentlyContinue
   Write-Host "      photos copied" -ForegroundColor Green
 } else {
   Write-Host "      [warn] no photo folder, skip" -ForegroundColor DarkYellow
