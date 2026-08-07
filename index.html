@@ -547,11 +547,33 @@ function drawWall(t){
   CTX.fillStyle="#1a2436";CTX.fillRect(tvX-4,tvY,tvW+8,tvH);
   CTX.fillStyle="#22304a";CTX.fillRect(tvX,tvY+2,tvW,tvH-2);
   CTX.strokeStyle="rgba(90,110,150,.5)";CTX.lineWidth=1;CTX.strokeRect(tvX,tvY+2,tvW,tvH-2);
-  CTX.fillStyle=Math.random()<0.06?"#dfe8ff":"#2a3560";
-  CTX.fillRect(tvX+3,tvY+5,tvW-6,tvH-10);
-  for(let i=0;i<22;i++){CTX.fillStyle="rgba(140,200,255,"+rand(.05,.35)+")";CTX.fillRect(tvX+3+Math.random()*(tvW-6),tvY+5+Math.random()*(tvH-10),rand(6,26),1);}
-  CTX.fillStyle="#9bd6ff";CTX.font="bold 10px sans-serif";CTX.textAlign="center";CTX.fillText("▶ LIVE",tvX+tvW/2,tvY+tvH/2-6);
-  CTX.fillStyle="rgba(120,220,255,.8)";CTX.font="9px sans-serif";CTX.fillText("小八频道 24H",tvX+tvW/2,tvY+tvH/2+8);
+  // 电视屏幕：优先播放真实小八视频，否则显示模拟雪花
+  const tv=ui("tvVideo");
+  const tvReady=tv&&tv.readyState>=2&&tv.videoWidth>0&&!tv.paused;
+  if(tvReady){
+    // 绘制视频帧（覆盖电视屏幕）
+    CTX.save();
+    CTX.beginPath();CTX.rect(tvX+3,tvY+5,tvW-6,tvH-10);CTX.clip();
+    const vr=tv.videoWidth/tv.videoHeight,tr=(tvW-6)/(tvH-10);
+    let dw=tvW-6,dh=tvH-10;
+    if(vr>tr){dh=dw/vr;}else{dw=dh*vr;}
+    CTX.drawImage(tv,tvX+3+(tvW-6-dw)/2,tvY+5+(tvH-10-dh)/2,dw,dh);
+    // 暗化 + 顶部渐变
+    CTX.fillStyle="rgba(0,0,0,.15)";CTX.fillRect(tvX+3,tvY+5,tvW-6,tvH-10);
+    CTX.restore();
+    // 频道角标
+    CTX.fillStyle="rgba(0,0,0,.5)";CTX.fillRect(tvX+3,tvY+5,tvW-6,16);
+    CTX.fillStyle="#7bffc0";CTX.font="bold 9px sans-serif";CTX.textAlign="center";
+    CTX.fillText("● LIVE",tvX+3+22,tvY+5+11);
+    CTX.fillStyle="#dcebff";CTX.font="8px sans-serif";CTX.fillText("小八频道 24H",tvX+tvW/2,tvY+5+26);
+  }else{
+    // 模拟雪花 + 频道名
+    CTX.fillStyle=Math.random()<0.06?"#dfe8ff":"#2a3560";
+    CTX.fillRect(tvX+3,tvY+5,tvW-6,tvH-10);
+    for(let i=0;i<22;i++){CTX.fillStyle="rgba(140,200,255,"+rand(.05,.35)+")";CTX.fillRect(tvX+3+Math.random()*(tvW-6),tvY+5+Math.random()*(tvH-10),rand(6,26),1);}
+    CTX.fillStyle="#9bd6ff";CTX.font="bold 10px sans-serif";CTX.textAlign="center";CTX.fillText("▶ LIVE",tvX+tvW/2,tvY+tvH/2-6);
+    CTX.fillStyle="rgba(120,220,255,.8)";CTX.font="9px sans-serif";CTX.fillText("小八频道 24H",tvX+tvW/2,tvY+tvH/2+8);
+  }
   // 电视柜脚
   CTX.fillStyle="#5a3a1e";CTX.fillRect(tvX+4,tvY+tvH,5,8);CTX.fillRect(tvX+tvW-9,tvY+tvH,5,8);
   // 大窗 + 窗帘（保留互动窗但改明亮浅色窗帘）
@@ -1762,6 +1784,18 @@ const VIDEO_SRC="video.mp4";
 function setupVideo(){
   const v=ui("catVideo"),ph=ui("videoPh"),btn=ui("videoBtn"),clr=ui("videoClr");
   if(VIDEO_SRC){v.src=VIDEO_SRC;v.style.display="block";ph.style.display="none";}
+  // 电视持续播放小八视频（静音循环）
+  const tv=ui("tvVideo");
+  if(tv&&VIDEO_SRC){
+    tv.src=VIDEO_SRC;
+    tv.muted=true;
+    tv.loop=true;
+    const tryPlay=()=>{const p=tv.play();if(p)p.catch(()=>{/* 等待用户交互后自动重试 */});};
+    tv.addEventListener("canplay",tryPlay,{once:true});
+    tv.addEventListener("loadeddata",tryPlay,{once:true});
+    // 用户首次点击页面后确保播放（绕过自动播放限制）
+    document.addEventListener("pointerdown",function once(){tryPlay();document.removeEventListener("pointerdown",once);});
+  }
   btn.addEventListener("click",()=>{const inp=document.createElement("input");inp.type="file";inp.accept="video/mp4,video/webm,video/quicktime,video/*";
     inp.onchange=()=>{const f=inp.files[0];if(!f)return;const url=URL.createObjectURL(f);v.src=url;v.style.display="block";ph.style.display="none";v.play().catch(()=>{});notif("🎬 已加载小八的视频","#7bffc0");};
     inp.click();});
@@ -1813,6 +1847,7 @@ const showHTML=`
 <p style="color:#8fa0cc;font-size:11px;margin-top:6px;">把照片放进同级文件夹后，修改 JS 中 SHOW_PHOTOS 数组即可（或填网络图床地址）</p></div>
 <div class="card"><h2>🎬 小八的日常视频</h2>
 <div class="videobox">
+<video id="tvVideo" autoplay loop muted playsinline style="display:none;"></video>
 <video id="catVideo" controls playsinline style="display:none;"></video>
 <div class="vidph" id="videoPh">📼 选择一个小八的视频文件（mp4 / webm）<br><span style="font-size:11px;color:#6f86c8;">仅在本地播放，不上传任何服务器</span></div>
 <div style="margin-top:10px;display:flex;gap:8px;justify-content:center;">
