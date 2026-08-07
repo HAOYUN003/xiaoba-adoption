@@ -207,7 +207,6 @@ html,body{height:100%;overflow:hidden;background:#03040a;color:#eaf2ff;
       <button data-open="Profile" title="档案"><span class="ic">📋</span>档案</button>
       <button data-open="Show" title="展示"><span class="ic">🖼</span>展示</button>
       <button data-open="Survey" title="问卷"><span class="ic">📝</span>问卷</button>
-      <button data-open="Copy" title="文案"><span class="ic">✍️</span>文案</button>
       <button data-open="Follow" title="回访"><span class="ic">🔍</span>回访</button>
     </div>
     <div id="notifs"></div>
@@ -1241,7 +1240,7 @@ function drawCatReflect(){
   CTX.globalAlpha=1;CTX.restore();
 }
 /* ===================== 交互 ===================== */
-function anyOverlay(){return ["Profile","Show","Survey","Copy","Follow"].some(o=>ui("ov"+o).classList.contains("show"));}
+function anyOverlay(){return ["Profile","Show","Survey","Follow"].some(o=>ui("ov"+o).classList.contains("show"));}
 function zoneCenter(k){const z=ZONE[k];return {x:z.x+z.w/2,y:z.y+z.h/2};}
 function startAction(mode,target){
   stopAction();
@@ -1641,7 +1640,7 @@ function drawGrade(t){
   CTX.globalAlpha=1;
 }
 /* ===================== 弹层（六合一） ===================== */
-const OVERLAYS=["Profile","Show","Survey","Copy","Follow"];
+const OVERLAYS=["Profile","Show","Survey","Follow"];
 function closeOverlays(){OVERLAYS.forEach(o=>ui("ov"+o).classList.remove("show"));}
 function openOverlay(name){OVERLAYS.forEach(o=>ui("ov"+o).classList.toggle("show",o===name));ui("feedbox").classList.remove("show");}
 document.querySelectorAll("#dock button").forEach(b=>b.addEventListener("click",()=>{
@@ -1746,25 +1745,6 @@ function surveyImport(){
   return L.join("\n");
 }
 function copyImport(btn){copyText(surveyImport(),btn);}
-const COPY=[
-  {name:"① 微信朋友圈",text:"苏州 / 南通领养｜一只自带省心天赋的奶牛小猫在等家 🐾\n\n它叫小八，2-4 个月大公奶牛猫，捡到时才两个月，如今已经完成了体内外驱虫，健康白白净净。\n\n小八最打动我的不是颜值，是它的懂事——到家第二天，它自己找到猫砂盆定点上厕所，上完还会走过来「喵」一声提醒我清理。从没有人教过它这些。\n\n它安静、温柔、省心。白天自己玩玩具、不拆家、不乱叫；晚上乖乖在阳台睡觉，清晨醒来也不吵我，只会轻轻趴到床边安静陪着。\n\n说实话，它是我见过最通人性的小猫咪。\n\n领养要求（可先看，符合再联系我）：\n✅ 纯室内封闭家养，已封窗\n✅ 愿意适龄后带它绝育、生病就医\n✅ 自有住房 / 房东许可 / 同住人都同意\n✅ 接受 3 个月照片视频回访\n✅ 如无法继续饲养，原路退回给我，不转送不丢弃\n\n苏州、南通可送上门，江浙沪可自提。有意私我（联系方式待填），先聊清楚再见面看猫。"},
-  {name:"② 小红书",text:"标题：捡到一只自带「省心天赋」的奶牛小猫，求靠谱家长 🐱\n\n苏州姐妹看过来！在给救助的奶牛小猫找家～\n\n🐈 小八｜公 · 约2-4月龄 · 已驱虫（呋虫胺）· 健康无耳螨无跳蚤\n\n它真的过分懂事了：\n· 到家第二天自己定点如厕，还会喵喵提醒我清理（没人教）\n· 温柔安静，不拆家不乱叫，情绪超稳定\n· 白天自己玩，晚上阳台睡觉，清晨不吵醒主人\n· 驱虫全程乖乖配合，几乎没有挣扎\n\n小缺点也如实说：幼年兴奋会轻咬手（用玩具引导就好）、坐车易应激（外出封闭猫包）。\n\n领养门槛不低，但为了它值得：\n① 纯室内封闭家养，已封窗，不散养\n② 适龄绝育，生病不弃养\n③ 自住房/房东许可/合租同住人全同意\n④ 接受3个月照片回访\n⑤ 不能养了必须退回，严禁转送丢弃\n\n苏州、南通可送上门，江浙沪自提。符合要求想接它回家的姐妹，评论区滴滴或私我（联系方式待填）～\n\n#苏州领养 #猫咪领养 #奶牛猫 #流浪猫救助 #南通领养"},
-  {name:"③ 豆瓣（宠物收养 / 苏州同城）",text:"【苏州·南通送养】乖巧通人性的奶牛幼猫小八找家\n\n救助一只流浪奶牛猫小八，约2-4月龄公猫，已用呋虫胺完成体内外驱虫，无耳螨、跳蚤、皮肤病，肠胃稳定，健康活泼。\n\n它的特别之处：\n1. 到家第二天自主定点如厕，自带掩埋排泄物本能，上完厕所还会主动喵喵提醒主人清理。\n2. 安静温柔，不拆家、不乱叫，白天自己玩玩具独处，情绪稳定。\n3. 夜间独自在阳台睡觉，清晨醒来不会打扰熟睡的主人，安静趴在床边行李箱陪睡，极度体谅人。\n4. 体内外驱虫全程极度配合，毫无挣扎。\n\n如实告知缺点：\n- 幼年兴奋时会下意识轻咬人手，需耐心引导，禁止打骂。\n- 乘车易应激、有跳车倾向，外出必须封闭猫包。\n\n领养要求（请逐条确认符合再联系）：\n1. 纯室内封闭式家养，禁散养/楼道放养/长期笼养/阳台圈养；\n2. 适龄后必须绝育，杜绝无序繁育；\n3. 生病愿意承担医疗开销，不因花费或麻烦弃养；\n4. 自有住房或房东许可；合租需同住人一致同意；宿舍集体居住婉拒；\n5. 接受3个月轻量化线上回访（照片/短视频即可）；\n6. 无法继续饲养须原路退回，严禁转送、丢弃。\n\n苏州、南通可送养，江浙沪自提。请联系（联系方式待填），先填初审问卷再约看猫。领养代替购买，谢谢大家。"},
-  {name:"④ 闲鱼",text:"标题：苏州南通送养 · 懂事省心的奶牛幼猫（已驱虫）\n\n闲鱼上的送养，不收任何费用，只为给这只小奶牛找个靠谱的家。\n\n猫咪基本情况：\n- 奶牛猫 / 公 / 约2-4月龄\n- 已用呋虫胺做体内外驱虫，无耳螨、跳蚤、皮肤病\n- 未绝育未打疫苗（适龄后我会带它完成，领养人需继续配合）\n\n为什么说它省心：\n到家第二天就自主定点上厕所，还主动提醒主人清理；不拆家不乱叫，安静独处；晚上阳台睡觉，清晨不吵醒主人；驱虫配合度高。\n\n领养门槛（务必看清楚，符合再拍/联系）：\n✅ 纯室内封闭家养、已封窗\n✅ 适龄绝育、生病就医、不弃养\n✅ 自住房/房东许可/同住人全同意\n✅ 接受3个月照片回访\n✅ 不能养必须退回，不转送不丢弃\n\n苏州、南通可送上门，江浙沪自提。评论区或私信联系（联系方式待填）。\n\n提示：发布时选择「送养」标签，标题避免含疑似买卖字样，避免触发平台风控。"},
-  {name:"⑤ 苏州本地宠物群 / 业主群",text:"各位邻居好，求助领养一只特别乖巧的奶牛小猫 🐈\n\n小八，约2-4月龄公猫，已驱虫、体检健康。它真的非常懂事——没人教，到家第二天就自己会定点上厕所，上完还会喵喵提醒我清理；不拆家、不乱叫，安静独处，晚上阳台睡，早上不吵醒主人。\n\n诚寻一位能给它安稳一生的家长：\n- 纯室内封闭家养（封窗、不散养）\n- 适龄绝育、生病就医、不弃养\n- 自住房/房东许可/合租全屋同意\n- 接受3个月照片视频回访\n- 日后如不能养，原路退回给我\n\n苏州、南通可送上门，江浙沪自提。有意向的邻居请联系我（联系方式待填），先聊聊再约看猫。感谢！"}
-];
-function buildCopy(){
-  const box=ui("copyList");
-  COPY.forEach(c=>{
-    const card=document.createElement("div");card.className="copycard";
-    const ch=document.createElement("div");ch.className="ch";
-    const h=document.createElement("h3");h.textContent=c.name;
-    const b=document.createElement("button");b.className="btn";b.textContent="📋 复制";
-    b.addEventListener("click",()=>copyText(c.text,b));
-    ch.appendChild(h);ch.appendChild(b);
-    const pre=document.createElement("pre");pre.textContent=c.text;
-    card.appendChild(ch);card.appendChild(pre);box.appendChild(card);});
-}
 function initFollow(){
   document.querySelectorAll("#ovFollow textarea").forEach(ta=>{const k=ta.dataset.k;const v=localStorage.getItem("xbF_"+k);if(v!=null)ta.value=v;
     ta.addEventListener("input",()=>{try{localStorage.setItem("xbF_"+k,ta.value);}catch(e){}});});
@@ -1869,7 +1849,6 @@ const showHTML=`
 <div class="foot" style="margin-top:12px;">※ 本页无广告、无外链、无弹窗，联系方式只对通过问卷达标的意向领养人开放。</div></div>`;
 ovlHTML("Show","🖼 领养展示页",showHTML);
 ovlHTML("Survey","📝 领养初审问卷",'<h1>领养初审问卷</h1><p class="sub">作答完毕后点「提交判定」即可看到你的得分；达标（≥ 60 分）自动解锁救助人联系方式。核心安全项一票否决。</p><div style="margin-bottom:14px;"><button class="btn primary" onclick="copyImport(this)">📋 复制问卷星导入文本</button> <button class="btn" onclick="resetQuiz()" style="margin-left:8px;">🔄 重新填写</button></div><div id="surveyForm"></div><div style="margin:12px 0;"><button class="btn primary" onclick="submitQuiz()" style="font-size:15px;padding:12px 28px;">✅ 提交判定 · 查看得分</button></div><div id="result"></div>');
-ovlHTML("Copy","✍️ 多平台发布文案",'<h1>多平台发布文案</h1><p class="sub">复制后直接发布即可 · 发布前记得把「联系方式待填」替换为真实信息。</p><div id="copyList"></div>');
 let followHTML=`<h1>领养回访记录表</h1><p class="sub">领养后 3 个月内轻量化线上回访（仅照片/短视频）· 填写内容自动保存在本地浏览器，无需联网。</p>
 <div class="card"><h2>领养人信息</h2><table class="tbl">
 <tr><th>领养人</th><td><textarea data-k="name" placeholder="姓名/昵称"></textarea></td></tr>
@@ -1918,7 +1897,6 @@ const SHOW_PHOTOS=[
 loadGame();
 fit();
 buildSurvey();
-buildCopy();
 initFollow();
 setupVideo();
 /* —— 小八口吻流程引导 —— */
@@ -1927,7 +1905,7 @@ const GUIDE=[
   {name:"🧭 想做什么点哪里",t:"地上摆着喂食台、玩具、飘窗软座、猫爬架……还有我的小床和电视。点击它们，我就会溜达过去陪你互动。"},
   {name:"💗 好感怎么提升",t:"喂我吃饭、陪我玩、让我睡觉、给我握手、贴贴撒娇……做这些都会增加好感度，等级越高解锁越多互动！"},
   {name:"📈 升级与奖励",t:"好感满了就升级：Lv2 解锁「握手」，Lv3 解锁「贴贴」，Lv4 解锁全套顺从动作。脏了记得帮我清理猫砂哦。"},
-  {name:"📋 资料与领养",t:"右侧的「档案/展示/问卷/文案/回访」能看到我的照片视频、领养问卷和文案。填完问卷达标，就能拿到救助人联系方式。"},
+  {name:"📋 资料与领养",t:"右侧的「档案/展示/问卷/回访」能看到我的照片视频、领养问卷等资料。填完问卷达标，就能拿到救助人联系方式。"},
   {name:"🚀 开始吧！",t:"现在，试着点一下我，或者点地上的喂食台喂我顿好吃的吧～我们一起把好感刷满！"}
 ];
 let guideStep=0,guideTimer=null;
