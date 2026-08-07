@@ -3,7 +3,7 @@
 
 # ===== Config paths (edit here if needed) =====
 $SRC_DIR  = "C:\Users\ASUS\小八领养守护官"
-$SRC_HTML = "$SRC_DIR\小八领养守护官_GTA5电影版.html"
+$SRC_HTML = "$SRC_DIR\小八领养守护官.html"
 $DEPLOY   = "C:\Users\ASUS\xiaoba_deploy"
 
 Write-Host "==========================================" -ForegroundColor Cyan
